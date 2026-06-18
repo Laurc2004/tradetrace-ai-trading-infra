@@ -1,5 +1,6 @@
 const SECRET_PATTERNS = [
   /QWEN_API_KEY\s*=\s*[^\s]+/gi,
+  /PLAYBOOK_ACCESS_KEY\s*=\s*[^\s]+/gi,
   /PLAYBOOK_API_KEY\s*=\s*[^\s]+/gi,
   /BITGET_API_KEY\s*=\s*[^\s]+/gi,
   /BITGET_SECRET_KEY\s*=\s*[^\s]+/gi,
@@ -12,6 +13,9 @@ const SECRET_KEYS = new Set([
   'api_key',
   'apikey',
   'apiKey',
+  'access_key',
+  'accessKey',
+  'playbook_access_key',
   'secret',
   'secretKey',
   'passphrase',

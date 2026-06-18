@@ -19,7 +19,7 @@ export type EventActor =
   | 'user'
   | 'agent'
   | 'qwen'
-  | 'playbook'
+  | 'getagent'
   | 'skill_hub'
   | 'risk_engine'
   | 'approval'
@@ -40,7 +40,6 @@ export interface StructuredStrategy {
   position_limit: string | null;
   risk_constraints: string[];
   unknowns: string[];
-  playbook_version_id?: string;
 }
 
 export interface Run {
@@ -87,7 +86,7 @@ export interface EvidencePack {
 export interface BacktestResult {
   backtest_id: string;
   run_id: string;
-  provider: 'bitget_playbook' | 'replay_fixture';
+  provider: 'bitget_playbook' | 'replay_fixture' | 'degraded_estimate';
   period: string;
   pnl: number;
   sharpe: number;

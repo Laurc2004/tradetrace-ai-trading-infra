@@ -301,7 +301,6 @@ Risk Engine must return reasons reviewers can understand without reading code.
 
 Never store or display:
 - `QWEN_API_KEY`
-- `PLAYBOOK_API_KEY` / `PLAYBOOK_ACCESS_KEY`
 - `BITGET_API_KEY`
 - `BITGET_SECRET_KEY`
 - `BITGET_PASSPHRASE`

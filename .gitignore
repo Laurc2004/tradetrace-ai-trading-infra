@@ -16,6 +16,9 @@ node_modules/
 data/*.json
 !data/.gitkeep
 
+# Runtime logs (per-run API call logs generated on demand — never committed)
+logs/
+
 # OS / editor
 .DS_Store
 .vscode/
