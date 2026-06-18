@@ -1,11 +1,9 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 export function ApprovalActions({ runId, enabled }: { runId: string; enabled: boolean }) {
-  const t = useTranslations('ApprovalActions');
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -14,7 +12,7 @@ export function ApprovalActions({ runId, enabled }: { runId: string; enabled: bo
       await fetch(`/api/runs/${runId}/${path}`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ reason: path === 'approve' ? t('approveReason') : t('rejectReason') }),
+        body: JSON.stringify({ reason: path === 'approve' ? 'Approved from Web UI demo.' : 'Rejected from Web UI demo.' }),
       });
       router.refresh();
     });
@@ -24,8 +22,8 @@ export function ApprovalActions({ runId, enabled }: { runId: string; enabled: bo
 
   return (
     <div className="actions">
-      <button disabled={isPending} onClick={() => act('approve')} type="button">{t('approve')}</button>
-      <button className="secondary" disabled={isPending} onClick={() => act('reject')} type="button">{t('reject')}</button>
+      <button disabled={isPending} onClick={() => act('approve')} type="button">Approve run</button>
+      <button className="secondary" disabled={isPending} onClick={() => act('reject')} type="button">Reject run</button>
     </div>
   );
 }

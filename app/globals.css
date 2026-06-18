@@ -142,6 +142,7 @@ textarea { min-height: 190px; resize: vertical; }
 
 .metric { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; color: var(--muted); }
 .metric strong { display: block; color: var(--ink); font-family: Georgia, 'Times New Roman', serif; font-size: 34px; letter-spacing: -0.06em; }
+.metric strong .pill { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; letter-spacing: 0; line-height: 1; }
 
 .run-list { display: grid; gap: 14px; }
 .run-row { display: flex; justify-content: space-between; gap: 20px; align-items: center; }
