@@ -163,6 +163,9 @@ http://localhost:3000
 
 ## API
 
+API 路由不带 locale 前缀（这样 Telegram webhook、curl、浏览器 fetch 都能用
+稳定路径）。Web UI 页面在 `/zh/...` 和 `/en/...` 下。
+
 ```text
 GET  /api/runs
 POST /api/runs
@@ -173,13 +176,26 @@ POST /api/runs/:runId/report
 POST /api/telegram
 ```
 
+### 多语言
+
+页面路由：
+
+- `/zh/...` — 中文（默认，根路径 `/` 会 307 跳到 `/zh`）
+- `/en/...` — English
+
+右上角 `中 / EN` 切换。默认是中文，跟文档的"中文为正本"保持一致。切换
+语言时只换路径前缀，不丢当前页位置。
+
 ## 项目结构
 
 ```text
 .
-├── README.md / README.zh.md
-├── PRD.md    / PRD.zh.md
-├── PLAN.md   / PLAN.zh.md
+├── README.md / README.en.md
+├── PRD.md    / PRD.en.md
+├── PLAN.md   / PLAN.en.md
+├── i18n/                       # next-intl 配置（routing, request）
+├── messages/                   # 多语言字典（zh.json, en.json）
+├── proxy.ts                    # next-intl 路由代理（Next 16 替代 middleware）
 ├── agent/
 │   ├── instructions.md        # 智能体身份 & 安全边界
 │   ├── agent.ts               # 主运行生命周期
@@ -188,7 +204,16 @@ POST /api/telegram
 │   ├── subagents/             # trace 分析师、风险官、事件报告员
 │   ├── channels/              # web + telegram 入口
 │   └── schedules/             # P1 模拟盘监控
-├── app/                       # Next.js Web UI
+├── app/
+│   ├── [locale]/              # 本地化页面（/zh/..., /en/...）
+│   │   ├── layout.tsx
+│   │   ├── page.tsx           # 落地页
+│   │   ├── runs/new/          # 新建运行
+│   │   ├── runs/[runId]/      # 运行详情
+│   │   └── dashboard/         # 仪表盘
+│   └── api/                   # 路由不带 locale 前缀
+│       ├── runs/
+│       └── telegram/
 ├── lib/                       # 共享类型、风险规则、敏感信息脱敏
 ├── samples/                   # 回放 fixture（run-success、run-blocked）
 └── data/                      # 本地运行 / 事件存储

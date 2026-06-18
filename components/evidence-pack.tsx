@@ -1,13 +1,15 @@
+import { useTranslations } from 'next-intl';
 import type { EvidencePack } from '@/lib/types';
 
 export function EvidencePackPanel({ evidence }: { evidence?: EvidencePack }) {
-  if (!evidence) return <section className="panel muted">Evidence Pack will appear after Bitget skills are collected.</section>;
+  const t = useTranslations('EvidencePack');
+  if (!evidence) return <section className="panel muted">{t('empty')}</section>;
 
   return (
     <section className="panel">
-      <div className="section-kicker">Bitget Skill Evidence Pack</div>
-      <h2>{evidence.aggregate_signal} signal</h2>
-      <p>Provider: {evidence.provider}. These skills enrich the run before risk scoring.</p>
+      <div className="section-kicker">{t('kicker')}</div>
+      <h2>{t('signal', { signal: evidence.aggregate_signal })}</h2>
+      <p>{t('providerLine', { provider: evidence.provider })}</p>
       <div className="grid" style={{ marginTop: 16 }}>
         {evidence.skills.map((skill) => (
           <article className="event-content" key={skill.skill}>
@@ -15,7 +17,7 @@ export function EvidencePackPanel({ evidence }: { evidence?: EvidencePack }) {
               <span>{skill.skill}</span>
               <span>{skill.status}</span>
               <span>{skill.signal}</span>
-              <span>{Math.round(skill.confidence * 100)}% confidence</span>
+              <span>{t('confidence', { percent: Math.round(skill.confidence * 100) })}</span>
             </div>
             <h3>{skill.summary}</h3>
             <ul>

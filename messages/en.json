@@ -1,0 +1,110 @@
+{
+  "Common": {
+    "brand": "TradeTrace",
+    "navNewRun": "New Run",
+    "navDashboard": "Dashboard",
+    "navApi": "API",
+    "langSwitchZh": "中",
+    "langSwitchEn": "EN",
+    "pending": "Pending",
+    "notAvailable": "Not available",
+    "loading": "Loading..."
+  },
+  "StatusPill": {
+    "created": "Created",
+    "parsing": "Parsing",
+    "collecting_evidence": "Collecting evidence",
+    "backtesting": "Backtesting",
+    "risk_review": "Risk review",
+    "awaiting_approval": "Awaiting approval",
+    "executing": "Executing",
+    "completed": "Completed",
+    "blocked": "Blocked",
+    "failed": "Failed"
+  },
+  "HomePage": {
+    "kicker": "Bitget Hackathon Track 2 Infra",
+    "title": "Flight recorder for AI trading agents.",
+    "lede": "TradeTrace records every strategy run as a replayable audit trail: what the user asked, how Qwen parsed it, how Playbook tested it, what risks triggered, who approved it, and what happened next.",
+    "startRun": "Start a run",
+    "viewDashboard": "View dashboard",
+    "finalFormKicker": "Final form",
+    "finalFormTitle": "Web UI + Telegram bot",
+    "finalFormBody": "Web UI is the main demo surface. Telegram is the trigger and approval channel. Both share one run/event store.",
+    "feature1Title": "Run timeline",
+    "feature2Title": "Risk ledger",
+    "feature3Title": "Replay and report",
+    "traceKicker": "Trace",
+    "traceTitle": "Every tool call is evidence.",
+    "traceBody": "Capture parse, backtest, risk, approval, and execution events in one timeline.",
+    "governKicker": "Govern",
+    "governTitle": "Risk before execution.",
+    "governBody": "Deterministic rules block martingale, high leverage, missing stop loss, and weak backtests.",
+    "replayKicker": "Replay",
+    "replayTitle": "Demo survives API failure.",
+    "replayBody": "Historical real runs can replay without live external APIs while staying auditable."
+  },
+  "NewRunPage": {
+    "kicker": "New Run",
+    "title": "Start the recorder.",
+    "strategyTitle": "Natural-language strategy",
+    "examplePrefix": "Example",
+    "errorGeneric": "Failed to create run. Check provider environment variables.",
+    "submitting": "Running recorder...",
+    "submit": "Create run",
+    "nextKicker": "What happens next",
+    "nextTitle": "Parse, enrich, test, score, gate, replay.",
+    "nextBody": "TradeTrace uses the same provider-backed path locally and online: Qwen parse, Bitget Skill Evidence Pack, Playbook backtest, Risk Ledger, approval, replay, and report."
+  },
+  "RunDetailPage": {
+    "kicker": "Flight Recorder",
+    "labelStatus": "Status",
+    "labelDecision": "Decision",
+    "labelChannel": "Channel",
+    "originalStrategyKicker": "Original strategy",
+    "backtestKicker": "Backtest Evidence",
+    "backtestPnL": "PnL",
+    "backtestSharpe": "Sharpe",
+    "backtestDrawdown": "Max drawdown",
+    "backtestWinRate": "Win rate",
+    "backtestEmpty": "No backtest available.",
+    "timelineKicker": "Replay Timeline"
+  },
+  "DashboardPage": {
+    "kicker": "Dashboard",
+    "title": "AgentOps for trading runs.",
+    "metricTotal": "Total runs",
+    "metricCompleted": "Completed",
+    "metricBlocked": "Blocked",
+    "metricAvgEvents": "Avg events/run",
+    "recentKicker": "Recent runs",
+    "pendingApprovals": "{count, plural, =0 {No runs are waiting for human approval.} one {# run is waiting for human approval.} other {# run(s) are waiting for human approval.}}"
+  },
+  "RiskLedger": {
+    "kicker": "Risk Ledger",
+    "outOf": "/100",
+    "riskAndRecommendation": "{level} Risk - {recommendation}",
+    "empty": "No risk assessment yet."
+  },
+  "EvidencePack": {
+    "kicker": "Bitget Skill Evidence Pack",
+    "signal": "{signal} signal",
+    "provider": "Provider",
+    "providerLine": "Provider: {provider}. These skills enrich the run before risk scoring.",
+    "confidence": "{percent}% confidence",
+    "empty": "Evidence Pack will appear after Bitget skills are collected."
+  },
+  "ReportPanel": {
+    "kicker": "Post-run Report",
+    "keyFindings": "Key findings",
+    "riskNotes": "Risk notes",
+    "nextActions": "Next actions",
+    "empty": "Report will appear after the run completes or is blocked."
+  },
+  "ApprovalActions": {
+    "approve": "Approve run",
+    "reject": "Reject run",
+    "approveReason": "Approved from Web UI demo.",
+    "rejectReason": "Rejected from Web UI demo."
+  }
+}

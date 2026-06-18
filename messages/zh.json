@@ -1,0 +1,110 @@
+{
+  "Common": {
+    "brand": "TradeTrace",
+    "navNewRun": "新建运行",
+    "navDashboard": "仪表盘",
+    "navApi": "API",
+    "langSwitchZh": "中",
+    "langSwitchEn": "EN",
+    "pending": "待定",
+    "notAvailable": "暂无数据",
+    "loading": "加载中..."
+  },
+  "StatusPill": {
+    "created": "已创建",
+    "parsing": "解析中",
+    "collecting_evidence": "收集证据中",
+    "backtesting": "回测中",
+    "risk_review": "风险评估中",
+    "awaiting_approval": "等待审批",
+    "executing": "执行中",
+    "completed": "已完成",
+    "blocked": "已拦截",
+    "failed": "已失败"
+  },
+  "HomePage": {
+    "kicker": "Bitget 黑客松 Track 2 基础设施",
+    "title": "AI 交易智能体的飞行记录器。",
+    "lede": "TradeTrace 把每一次策略运行都做成可回放的审计轨迹：用户提了什么需求、Qwen 怎么解析的、Playbook 怎么测的、触发了哪些风险、谁批的、之后又发生了什么。",
+    "startRun": "发起一次运行",
+    "viewDashboard": "查看仪表盘",
+    "finalFormKicker": "最终形态",
+    "finalFormTitle": "Web UI + Telegram Bot",
+    "finalFormBody": "Web UI 是主要的演示界面。Telegram 负责触发和审批。两者共用同一份运行/事件存储。",
+    "feature1Title": "运行时间线",
+    "feature2Title": "风险账本",
+    "feature3Title": "回放与报告",
+    "traceKicker": "追踪",
+    "traceTitle": "每一次工具调用都是证据。",
+    "traceBody": "把解析、回测、风险、审批、执行事件汇总到同一条时间线。",
+    "governKicker": "治理",
+    "governTitle": "执行前先过风险。",
+    "governBody": "用确定性规则拦截 martingale、高杠杆、缺止损、弱回测等危险模式。",
+    "replayKicker": "回放",
+    "replayTitle": "Demo 不会因 API 抖动而崩。",
+    "replayBody": "用历史真实运行数据回放，无需实时调用外部 API，同时保持可审计性。"
+  },
+  "NewRunPage": {
+    "kicker": "新建运行",
+    "title": "启动记录器。",
+    "strategyTitle": "自然语言策略",
+    "examplePrefix": "示例",
+    "errorGeneric": "发起运行失败。请检查 provider 相关的环境变量。",
+    "submitting": "正在调用记录器...",
+    "submit": "创建运行",
+    "nextKicker": "接下来会发生什么",
+    "nextTitle": "解析、富化、测试、评分、把关、回放。",
+    "nextBody": "TradeTrace 本地和在线走完全相同的 provider-backed 路径：Qwen 解析、Bitget Skill 证据包、Playbook 回测、风险账本、审批、回放、报告。"
+  },
+  "RunDetailPage": {
+    "kicker": "飞行记录器",
+    "labelStatus": "状态",
+    "labelDecision": "决策",
+    "labelChannel": "渠道",
+    "originalStrategyKicker": "原始策略",
+    "backtestKicker": "回测证据",
+    "backtestPnL": "PnL",
+    "backtestSharpe": "Sharpe",
+    "backtestDrawdown": "最大回撤",
+    "backtestWinRate": "胜率",
+    "backtestEmpty": "暂无回测数据。",
+    "timelineKicker": "回放时间线"
+  },
+  "DashboardPage": {
+    "kicker": "仪表盘",
+    "title": "面向交易运行的 AgentOps。",
+    "metricTotal": "运行总数",
+    "metricCompleted": "已完成",
+    "metricBlocked": "已拦截",
+    "metricAvgEvents": "平均事件数 / 运行",
+    "recentKicker": "近期运行",
+    "pendingApprovals": "{count, plural, =0 {没有运行在等待人工审批。} other {有 # 个运行在等待人工审批。}}"
+  },
+  "RiskLedger": {
+    "kicker": "风险账本",
+    "outOf": "/100",
+    "riskAndRecommendation": "{level} 风险 - {recommendation}",
+    "empty": "暂无风险评估。"
+  },
+  "EvidencePack": {
+    "kicker": "Bitget Skill 证据包",
+    "signal": "{signal} 信号",
+    "provider": "Provider",
+    "providerLine": "Provider: {provider}。这些技能在风险评分前对这次运行做富化。",
+    "confidence": "{percent}% 置信度",
+    "empty": "Bitget 技能被收集后会展示证据包。"
+  },
+  "ReportPanel": {
+    "kicker": "运行后报告",
+    "keyFindings": "关键发现",
+    "riskNotes": "风险备注",
+    "nextActions": "建议下一步",
+    "empty": "运行完成或被拦截后才会出现报告。"
+  },
+  "ApprovalActions": {
+    "approve": "审批通过",
+    "reject": "拒绝",
+    "approveReason": "在 Web UI 演示中审批通过。",
+    "rejectReason": "在 Web UI 演示中拒绝。"
+  }
+}

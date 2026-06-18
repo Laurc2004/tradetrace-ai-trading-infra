@@ -16,10 +16,10 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "next": "latest",
+    "next-intl": "^4.13.0",
     "react": "latest",
     "react-dom": "latest",
     "typescript": "latest",
     "zod": "latest"
-  },
-  "devDependencies": {}
+  }
 }
