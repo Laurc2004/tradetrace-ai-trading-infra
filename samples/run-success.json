@@ -1,0 +1,252 @@
+{
+  "run": {
+    "run_id": "sample_success",
+    "source_channel": "web",
+    "status": "completed",
+    "user_input": "When BTC on 1h EMA20 crosses above EMA50 and RSI crosses from 45 to 55, go long. Use 1.5% stop loss, 4% take profit, max position 15%, pause after two consecutive losses.",
+    "market": "BTCUSDT",
+    "started_at": "2026-06-18T06:00:00.000Z",
+    "ended_at": "2026-06-18T06:00:12.000Z",
+    "final_decision": "Go",
+    "report_id": "report_sample_success"
+  },
+  "strategy": {
+    "strategy_id": "strategy_sample_success",
+    "run_id": "sample_success",
+    "raw_prompt": "When BTC on 1h EMA20 crosses above EMA50 and RSI crosses from 45 to 55, go long. Use 1.5% stop loss, 4% take profit, max position 15%, pause after two consecutive losses.",
+    "structured_strategy": {
+      "symbol": "BTCUSDT",
+      "timeframe": "1h",
+      "direction": "long",
+      "entry_conditions": [
+        "EMA20 crosses above EMA50",
+        "RSI crosses from 45 to 55"
+      ],
+      "exit_conditions": [
+        "Take-profit target"
+      ],
+      "stop_loss": "1.5%",
+      "take_profit": "4%",
+      "position_limit": "15%",
+      "risk_constraints": [
+        "Pause after two consecutive losses",
+        "Position limit requested"
+      ],
+      "unknowns": []
+    },
+    "confidence_notes": [
+      "Sample run fixture for replay mode."
+    ],
+    "created_at": "2026-06-18T06:00:02.000Z"
+  },
+  "backtest": {
+    "backtest_id": "backtest_sample_success",
+    "run_id": "sample_success",
+    "provider": "replay_fixture",
+    "period": "2026-05-01 to 2026-06-15",
+    "pnl": 14.6,
+    "sharpe": 1.42,
+    "win_rate": 56,
+    "max_drawdown": 8.8,
+    "trade_count": 28,
+    "raw_summary_ref": "sample-success-playbook-compatible-result",
+    "created_at": "2026-06-18T06:00:05.000Z"
+  },
+  "risk": {
+    "risk_id": "risk_sample_success",
+    "run_id": "sample_success",
+    "score": 0,
+    "level": "Low",
+    "recommendation": "Go",
+    "triggered_rules": [],
+    "reasons": [
+      "No major risk rules were triggered."
+    ],
+    "created_at": "2026-06-18T06:00:06.000Z"
+  },
+  "approval": {
+    "approval_id": "approval_sample_success",
+    "run_id": "sample_success",
+    "required": false,
+    "decision": "not_required",
+    "reviewer": "system",
+    "reason": "Low risk run can continue automatically.",
+    "channel": "web",
+    "timestamp": "2026-06-18T06:00:07.000Z"
+  },
+  "report": {
+    "report_id": "report_sample_success",
+    "run_id": "sample_success",
+    "executive_summary": "Sample success run completed with Go. Strategy was parsed, backtested, risk-scored, and replayed without triggering major risk rules.",
+    "key_findings": [
+      "Parsed long BTCUSDT strategy on 1h timeframe.",
+      "Backtest PnL 14.6%, Sharpe 1.42, max drawdown 8.8%.",
+      "Evidence Pack collected 5 Bitget skills with risk-on aggregate signal.",
+      "Approval was not required because risk level was Low."
+    ],
+    "risk_notes": [
+      "No major risk rules were triggered."
+    ],
+    "audit_trail": [
+      "Strategy input received",
+      "Qwen-compatible parse completed",
+      "Playbook-compatible backtest completed",
+      "Risk score generated",
+      "Replay completed"
+    ],
+    "next_actions": [
+      "Replay before paper trading",
+      "Monitor drawdown",
+      "Compare against a second strategy version"
+    ],
+    "created_at": "2026-06-18T06:00:12.000Z"
+  },
+  "events": [
+    {
+      "event_id": "evt_sample_001",
+      "run_id": "sample_success",
+      "timestamp": "2026-06-18T06:00:00.000Z",
+      "type": "strategy.input.received",
+      "actor": "user",
+      "status": "completed",
+      "input_summary": "BTC EMA/RSI strategy",
+      "output_summary": "Strategy input accepted and run created.",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_sample_002",
+      "run_id": "sample_success",
+      "timestamp": "2026-06-18T06:00:02.000Z",
+      "type": "strategy.parsed",
+      "actor": "qwen",
+      "status": "completed",
+      "input_summary": "Natural-language strategy",
+      "output_summary": "BTCUSDT long 1h",
+      "duration_ms": 820
+    },
+    {
+      "event_id": "evt_sample_evidence",
+      "run_id": "sample_success",
+      "timestamp": "2026-06-18T06:00:04.000Z",
+      "type": "skill_hub.evidence.completed",
+      "actor": "skill_hub",
+      "status": "completed",
+      "input_summary": "strategy_sample_success",
+      "output_summary": "5 skills collected, aggregate signal: risk-on",
+      "duration_ms": 640,
+      "raw_ref": "fallback"
+    },
+    {
+      "event_id": "evt_sample_003",
+      "run_id": "sample_success",
+      "timestamp": "2026-06-18T06:00:05.000Z",
+      "type": "playbook.backtest.completed",
+      "actor": "playbook",
+      "status": "completed",
+      "input_summary": "strategy_sample_success",
+      "output_summary": "PnL 14.6%, Sharpe 1.42, Max DD 8.8%",
+      "duration_ms": 2100,
+      "raw_ref": "sample-success-playbook-compatible-result"
+    },
+    {
+      "event_id": "evt_sample_004",
+      "run_id": "sample_success",
+      "timestamp": "2026-06-18T06:00:06.000Z",
+      "type": "risk.scored",
+      "actor": "risk_engine",
+      "status": "completed",
+      "input_summary": "backtest_sample_success/strategy_sample_success",
+      "output_summary": "Low risk (0/100), recommendation: Go",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_sample_005",
+      "run_id": "sample_success",
+      "timestamp": "2026-06-18T06:00:09.000Z",
+      "type": "execution.replay.started",
+      "actor": "execution",
+      "status": "started",
+      "input_summary": "Replay execution adapter",
+      "output_summary": "Replay execution started using recorded backtest-compatible events.",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_sample_006",
+      "run_id": "sample_success",
+      "timestamp": "2026-06-18T06:00:12.000Z",
+      "type": "run.report.generated",
+      "actor": "reporter",
+      "status": "completed",
+      "input_summary": "Run evidence bundle",
+      "output_summary": "Sample success run completed with Go.",
+      "duration_ms": 0
+    }
+  ],
+  "evidence": {
+    "evidence_id": "evidence_sample_success",
+    "run_id": "sample_success",
+    "provider": "fallback",
+    "aggregate_signal": "risk-on",
+    "risk_flags": [],
+    "created_at": "2026-06-18T06:00:04.000Z",
+    "skills": [
+      {
+        "skill": "technical-analysis",
+        "status": "fallback",
+        "signal": "bullish",
+        "confidence": 0.72,
+        "summary": "BTCUSDT technical evidence is compatible with a rules-based momentum strategy.",
+        "key_points": [
+          "Trend confirmation is explicit.",
+          "Stop loss and position sizing make the setup auditable."
+        ],
+        "raw_ref": "fallback:technical-analysis"
+      },
+      {
+        "skill": "sentiment-analyst",
+        "status": "fallback",
+        "signal": "neutral",
+        "confidence": 0.58,
+        "summary": "No extreme sentiment conflict detected in fallback mode.",
+        "key_points": [
+          "Sentiment evidence should be verified with live Agent Hub data."
+        ],
+        "raw_ref": "fallback:sentiment-analyst"
+      },
+      {
+        "skill": "news-briefing",
+        "status": "fallback",
+        "signal": "neutral",
+        "confidence": 0.5,
+        "summary": "Fallback mode has no live news shock.",
+        "key_points": [
+          "Use live news before paper trading.",
+          "Replay mode marks this as neutral evidence."
+        ],
+        "raw_ref": "fallback:news-briefing"
+      },
+      {
+        "skill": "market-intel",
+        "status": "fallback",
+        "signal": "mixed",
+        "confidence": 0.62,
+        "summary": "Market-intel fallback finds no hard block beyond normal volatility.",
+        "key_points": [
+          "Monitor volatility and liquidity before execution."
+        ],
+        "raw_ref": "fallback:market-intel"
+      },
+      {
+        "skill": "macro-analyst",
+        "status": "fallback",
+        "signal": "neutral",
+        "confidence": 0.46,
+        "summary": "Macro fallback is neutral; live mode should check CPI/FOMC/rates calendar before approval.",
+        "key_points": [
+          "Macro is valuable as a pre-execution veto, not as a trading signal alone."
+        ],
+        "raw_ref": "fallback:macro-analyst"
+      }
+    ]
+  }
+}
