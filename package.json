@@ -1,0 +1,25 @@
+{
+  "name": "tradetrace-flight-recorder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A flight recorder for AI trading agents, built for Bitget AI Hackathon Track 2 Infra.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run build"
+  },
+  "dependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {}
+}

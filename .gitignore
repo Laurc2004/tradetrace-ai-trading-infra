@@ -1,0 +1,25 @@
+# Build / cache
+.next/
+out/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+.npm-cache/
+
+# Environment files (NEVER commit real keys)
+.env
+.env.local
+.env.*.local
+
+# Runtime data (local run/event store)
+data/*.json
+!data/.gitkeep
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Tooling scratch
+.claude/
