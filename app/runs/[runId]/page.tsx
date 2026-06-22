@@ -85,7 +85,7 @@ export default async function RunDetailPage({ params }: Props) {
         <Timeline events={bundle.events} />
       </section>
 
-      <div style={{ marginTop: 24 }}>
+      <div id="report" style={{ marginTop: 24 }}>
         <ReportPanel report={bundle.report} />
       </div>
     </main>

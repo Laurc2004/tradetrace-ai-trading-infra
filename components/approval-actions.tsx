@@ -15,6 +15,13 @@ export function ApprovalActions({ runId, enabled }: { runId: string; enabled: bo
         body: JSON.stringify({ reason: path === 'approve' ? 'Approved from Web UI demo.' : 'Rejected from Web UI demo.' }),
       });
       router.refresh();
+      // Scroll to the report section so the user sees where the report will land.
+      // Wait one frame so the refreshed DOM (report placeholder) is mounted first.
+      if (path === 'approve') {
+        requestAnimationFrame(() => {
+          document.getElementById('report')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
     });
   }
 
@@ -22,8 +29,12 @@ export function ApprovalActions({ runId, enabled }: { runId: string; enabled: bo
 
   return (
     <div className="actions">
-      <button disabled={isPending} onClick={() => act('approve')} type="button">Approve run</button>
-      <button className="secondary" disabled={isPending} onClick={() => act('reject')} type="button">Reject run</button>
+      <button disabled={isPending} onClick={() => act('approve')} type="button">
+        {isPending ? 'Executing...' : 'Approve run'}
+      </button>
+      <button className="secondary" disabled={isPending} onClick={() => act('reject')} type="button">
+        {isPending ? 'Rejecting...' : 'Reject run'}
+      </button>
     </div>
   );
 }
