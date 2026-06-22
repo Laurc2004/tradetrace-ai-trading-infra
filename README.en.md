@@ -119,15 +119,20 @@ Two entry points share **one run store** — a run started in Telegram is visibl
    curl "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook?url=https://your-domain/api/telegram"
    ```
 
-4. Use commands in Telegram:
+4. Register the command menu (so `/run` etc. show up in the command autocomplete):
+
+   ```bash
+   npm run telegram:register
+   ```
+
+5. Use commands in Telegram:
 
    ```text
-   /run <NL strategy>        # start a run
-   /status <run_id>          # query status
-   /approve <run_id>         # approve execution
-   /reject <run_id> <reason> # reject execution
+   /run <NL strategy>        # start a run (streams stages; shows Approve/Reject buttons at the approval step)
+   /status <run_id>          # query status and decision
    /report <run_id>          # fetch report summary
    ```
+   Approval is done via the inline **Approve / Reject** buttons on the `/run` result message (no command needed).
 
 ---
 

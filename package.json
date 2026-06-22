@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run build"
+    "check": "npm run typecheck && npm run build",
+    "telegram:register": "node scripts/telegram-register-commands.mjs"
   },
   "dependencies": {
     "@types/node": "latest",

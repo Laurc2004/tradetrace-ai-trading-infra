@@ -134,15 +134,20 @@ npm run start       # 以生产模式启动
    curl "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook?url=https://你的域名/api/telegram"
    ```
 
-4. 在 Telegram 里使用命令：
+4. 注册命令菜单（让 `/run` 等命令出现在输入框的命令自动补全里）：
+
+   ```bash
+   npm run telegram:register
+   ```
+
+5. 在 Telegram 里使用命令：
 
    ```text
-   /run <自然语言策略>        # 发起一次运行
-   /status <run_id>          # 查询状态
-   /approve <run_id>         # 批准执行
-   /reject <run_id> <原因>   # 拒绝执行
+   /run <自然语言策略>        # 发起一次运行（流式播报各阶段，到审批步骤时出现 Approve/Reject 按钮）
+   /status <run_id>          # 查询状态与决策
    /report <run_id>          # 拉取报告摘要
    ```
+   审批通过 `/run` 结果消息上的内联 **Approve / Reject** 按钮完成（无需手敲命令）。
 
 ---
 
