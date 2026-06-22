@@ -144,9 +144,12 @@ export default function NewRunPage() {
     <main>
       <div className="kicker">New Run</div>
       <h1>Start the recorder.</h1>
-      <div className="grid two">
+      <p className="lead">Describe a strategy in plain language. The recorder will parse it, backtest on real Bitget klines, score the risk, and gate execution — all streamed live below.</p>
+
+      <div className="grid two" style={{ marginTop: 40 }}>
         <section className="panel">
-          <h2>Natural-language strategy</h2>
+          <div className="section-kicker">Natural-language strategy</div>
+          <h2>Describe what the agent should do.</h2>
           <div className="examples">
             {templates.map((template) => (
               <button className="example" key={template.id} onClick={() => chooseTemplate(template)} type="button">
@@ -157,14 +160,14 @@ export default function NewRunPage() {
               Fully custom
             </button>
           </div>
-          {mode === 'template' ? <p>{selected.description}</p> : <p>Start from a blank strategy prompt.</p>}
+          <p>{mode === 'template' ? selected.description : 'Start from a blank strategy prompt.'}</p>
           <textarea
             placeholder="Enter any natural-language trading strategy..."
             value={strategy}
             onChange={(event) => setStrategy(event.target.value)}
           />
-          {error ? <p style={{ color: 'var(--red)' }}>{error}</p> : null}
-          <div className="actions">
+          {error ? <p className="warn" style={{ marginTop: 14 }}>{error}</p> : null}
+          <div className="hero-actions" style={{ marginTop: 24 }}>
             <button onClick={submit} disabled={isRunning || !strategy.trim()} type="button">
               {isRunning ? 'Running recorder...' : 'Create run'}
             </button>
@@ -175,19 +178,27 @@ export default function NewRunPage() {
             ) : null}
           </div>
         </section>
-        <section className="panel flight-card">
+
+        <section className="panel">
           <div className="section-kicker">What happens next</div>
-          <h2>Watch AI and tools live.</h2>
-          <p>When a run starts, the console below streams real Qwen, Evidence Pack, GetAgent, risk engine, approval, and report events.</p>
+          <h2>Six stages, fully recorded.</h2>
+          <div className="step-list">
+            <div className="step"><span className="step-num">01</span><span className="step-label">Qwen parses the strategy into structured intent</span></div>
+            <div className="step"><span className="step-num">02</span><span className="step-label">Evidence pack enriches the run (Bitget klines)</span></div>
+            <div className="step"><span className="step-num">03</span><span className="step-label">Local deterministic backtest on real klines</span></div>
+            <div className="step"><span className="step-num">04</span><span className="step-label">Risk engine scores and gates the strategy</span></div>
+            <div className="step"><span className="step-num">05</span><span className="step-label">Human approval on Web UI or Telegram</span></div>
+            <div className="step"><span className="step-num">06</span><span className="step-label">Report generated, run archived as replayable</span></div>
+          </div>
         </section>
       </div>
 
-      <section className="panel" style={{ marginTop: 20 }}>
+      <section className="panel section-gap">
         <div className="section-kicker">Live tool-call console</div>
         {consoleLines.length === 0 ? (
-          <p>Start a run to see live program and AI output here.</p>
+          <p style={{ marginTop: 12 }}>Start a run to see live AI and tool output stream here in real time.</p>
         ) : (
-          <div className="timeline">
+          <div className="timeline" style={{ marginTop: 20 }}>
             {consoleLines.map((line, index) => (
               <article className="event-card" key={`${line.timestamp}-${line.type}-${index}`}>
                 <div className="event-dot" />
@@ -199,7 +210,7 @@ export default function NewRunPage() {
                     <span>{new Date(line.timestamp).toLocaleTimeString()}</span>
                   </div>
                   <h3>{line.message}</h3>
-                  {line.detail ? <pre style={{ whiteSpace: 'pre-wrap', overflow: 'auto' }}>{line.detail}</pre> : null}
+                  {line.detail ? <pre>{line.detail}</pre> : null}
                 </div>
               </article>
             ))}

@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'TradeTrace',
-  description: 'A flight recorder for AI trading agents: parse, backtest, score risk, gate execution, replay.',
+  title: 'TradeTrace — Flight recorder for AI trading agents',
+  description:
+    'TradeTrace records every AI trading strategy run as a replayable audit trail: parse, local backtest, risk gating, human approval, and execution.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -11,7 +12,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <header className="topbar">
-          <a className="brand" href="/">TradeTrace</a>
+          <a className="brand" href="/">
+            <span className="brand-dot" aria-hidden />
+            TradeTrace
+          </a>
           <div className="topbar-right">
             <nav>
               <a href="/runs/new">New Run</a>
