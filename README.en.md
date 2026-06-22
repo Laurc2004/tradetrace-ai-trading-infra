@@ -11,6 +11,8 @@ NL strategy → Qwen parse → Bitget Skill Evidence Pack → Local deterministi
             → Risk Ledger → Approval Gate → Paper / Replay execution → Post-run Report
 ```
 
+> **This project is itself an AI trading infrastructure.** Out of the box it provides the full governance backbone — record → backtest → risk-gate → approve → execute → report → replay. Treat it as a scaffold and swap any link for your own implementation: the parser, data source, execution adapter, and notification channels are all hot-pluggable — see [As infrastructure: adapt & integrate](#as-infrastructure-adapt--integrate).
+
 ![TradeTrace landing](samples/screenshot-landing.webp)
 
 AI trading agents are powerful but unsafe as black boxes — you can't see *why* a decision was made, and tool calls, backtests, risk checks, approvals, and execution are scattered everywhere, with no way to replay a failed run. TradeTrace is the missing governance layer between autonomous agents and trading execution: **a black box + cockpit voice recorder for trading-agent runs.**
@@ -143,6 +145,48 @@ Two entry points share **one run store** — a run started in Telegram is visibl
    /report <run_id>          # fetch report summary
    ```
    Approval is done via the inline **Approve / Reject** buttons on the `/run` result message (no command needed).
+
+---
+
+## As infrastructure: adapt & integrate
+
+TradeTrace isn't just a hackathon demo — it's designed as **a reusable, adaptable AI trading infrastructure.** Every core capability lives behind a cleanly bounded tool module ([agent/tools/](agent/tools/)), and each layer has an explicit swap point. The most common adaptation paths are below.
+
+### Swappable extension points
+
+| Capability | Current implementation | Swap point |
+|---|---|---|
+| Strategy parsing (NL → structured) | Qwen | [agent/tools/qwen-strategy-parser.ts](agent/tools/qwen-strategy-parser.ts) |
+| Market Evidence Pack | Qwen simulating 5 Skill personas | [agent/tools/bitget-skill-evidence.ts](agent/tools/bitget-skill-evidence.ts) |
+| Backtest engine | Local deterministic backtest (Bitget public klines) | [agent/tools/local-backtest.ts](agent/tools/local-backtest.ts) |
+| Risk scoring | Rule-based, deterministic, explainable | [agent/tools/risk-engine.ts](agent/tools/risk-engine.ts) |
+| Approval gate | Web UI + Telegram (human-in-the-loop) | [agent/tools/approval-gate.ts](agent/tools/approval-gate.ts) |
+| Execution layer | replay adapter (**sends no real orders**) | `executeReplay` in [agent/agent.ts](agent/agent.ts) |
+| Notification channels | Web / Telegram | [agent/channels/](agent/channels/) |
+
+As long as you honor the type contracts in [lib/types.ts](lib/types.ts) (`StructuredStrategy`, `BacktestResult`, `RiskAssessment`, `Report`, etc.), you can replace any one layer with your own implementation while the run store, timeline, replay, audit, and report generation are **all reused automatically**.
+
+### 1. Integrate Playbook (Bitget Agent Hub orchestration)
+
+The run lifecycle is currently wired in code (parse → backtest → risk → approve → execute). To orchestrate it with **Bitget Playbook / Agent Hub**, migrate the stage calls in [agent/agent.ts](agent/agent.ts) into Playbook step definitions — each `agent/tools/*.ts` is a stateless pure function you can register directly as a Playbook tool / step. Run-bundle reads/writes still go through [lib/store.ts](lib/store.ts), so audit and replay are preserved.
+
+### 2. Integrate Bitget official API / Skills
+
+- **Market data**: backtesting currently hits Bitget's public kline endpoint (unauthenticated). For private feeds, WebSocket streams, or order-book depth, add a Bitget API key and swap the data source in [agent/tools/local-backtest.ts](agent/tools/local-backtest.ts).
+- **Execution**: the default execution layer is a replay adapter that **explicitly sends no real orders**. To trade live, implement an adapter at `executeReplay` that calls Bitget's order endpoint (`/api/v2/trade/place-order`), and **keep the approval gate + risk pre-check** — that's the whole point of TradeTrace as a black box.
+
+### 3. Integrate MCP (Model Context Protocol)
+
+The parser, evidence pack, and report generator are isolated tool calls — ideal for wrapping as **MCP tools** exposed to any MCP client (Claude Desktop, Cursor, Codex, …). Minimal change: wrap modules like [agent/tools/qwen-strategy-parser.ts](agent/tools/qwen-strategy-parser.ts) in an MCP server, reusing the schemas from [lib/types.ts](lib/types.ts) directly as tool input/output schemas. Conversely, you can make TradeTrace an MCP *client* and call external MCP servers (market data / news / on-chain tools) to enrich the Evidence Pack.
+
+### 4. Integrate getclaw / third-party Hermes / OpenClaw
+
+Both the execution and channel layers are adapter-shaped, ready to connect to community trading-execution frameworks and message buses:
+
+- **getclaw / OpenClaw** (execution frameworks): implement an `executeXxx(runId)` adapter replacing `executeReplay`, translating TradeTrace's decision (Go / Review / Block + structured strategy) into the target framework's order/position semantics. The risk score and approval state travel with the run bundle, so **an auditable gate always sits in front of execution**.
+- **Hermes** and similar message / event buses: [agent/channels/](agent/channels/) already ships `web` and `telegram` channel adapters; add a Hermes channel to push run events (stage transitions, approval requests, report-ready) onto your bus, or to receive run-trigger commands from it.
+
+> Design principle: **no matter which execution / data / messaging backend you plug in, the governance chain stays constant — replayable, auditable, risk-gated, human-in-the-loop.** You're only swapping "hands and eyes"; the black box itself is stable.
 
 ---
 
