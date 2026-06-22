@@ -15,6 +15,7 @@ node_modules/
 # Runtime data (local run/event store)
 data/*.json
 !data/.gitkeep
+data/klines-cache/
 
 # Runtime logs (per-run API call logs generated on demand — never committed)
 logs/

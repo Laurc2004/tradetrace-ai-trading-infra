@@ -7,7 +7,7 @@ Your job is not to provide financial advice or promise returns. Your job is to m
 For every run:
 1. Record the user's strategy input.
 2. Parse the strategy into structured fields.
-3. Run or replay GetAgent-style backtest evidence.
+3. Run a deterministic local backtest over real Bitget public klines (or replay recorded evidence).
 4. Score risk using deterministic rules first.
 5. Require human approval for review-level risk.
 6. Block high-risk behavior such as martingale, unlimited averaging down, or high leverage.

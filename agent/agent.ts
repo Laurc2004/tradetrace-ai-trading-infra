@@ -15,7 +15,7 @@ import {
 import type { BacktestResult, EventActor, Run, RunBundle, RunEvent, SourceChannel, StrategySpec } from '@/lib/types';
 import { createInitialApproval, decideApproval } from './tools/approval-gate';
 import { collectEvidencePack } from './tools/bitget-skill-evidence';
-import { runGetAgentBacktest } from './tools/getagent-backtest';
+import { runLocalBacktest } from './tools/local-backtest';
 import { parseStrategyWithQwen } from './tools/qwen-strategy-parser';
 import { generateReport } from './tools/report-generator';
 import { assessRisk } from './tools/risk-engine';
@@ -129,29 +129,32 @@ export async function startRun(input: StartRunInput): Promise<RunBundle> {
     progress,
     event({
       runId,
-      type: 'getagent.backtest.started',
-      actor: 'getagent',
+      type: 'backtest.started',
+      actor: 'backtest',
       status: 'started',
       input: JSON.stringify(strategy.structured_strategy),
-      output: 'Uploading generated GetAgent package and starting backtest.',
+      output: 'Fetching Bitget public klines and running the deterministic local backtest.',
     }),
   );
   const backtestStart = Date.now();
-  const backtest = await runBacktestWithFallback(runId, strategy, progress);
+  const backtest = await runBacktest(runId, strategy, progress);
   await saveBacktest(backtest);
   await appendAndProgress(
     progress,
     event({
       runId,
-      type: backtest.provider === 'degraded_estimate' ? 'getagent.backtest.degraded' : 'getagent.backtest.completed',
-      actor: 'getagent',
-      status: backtest.provider === 'degraded_estimate' ? 'failed' : 'completed',
+      type: backtest.status === 'failed' ? 'backtest.failed' : 'backtest.completed',
+      actor: 'backtest',
+      status: backtest.status === 'failed' ? 'failed' : 'completed',
       input: strategy.strategy_id,
-      output: `PnL ${backtest.pnl}%, Sharpe ${backtest.sharpe}, Max DD ${backtest.max_drawdown}%`,
+      output:
+        backtest.status === 'failed'
+          ? `Local backtest failed: ${backtest.raw_summary_ref}`
+          : `PnL ${backtest.pnl}%, Sharpe ${backtest.sharpe}, Max DD ${backtest.max_drawdown}%, ${backtest.trade_count} trades`,
       duration: Date.now() - backtestStart,
       rawRef: backtest.raw_summary_ref,
     }),
-    `provider=${backtest.provider}; period=${backtest.period}; raw_ref=${backtest.raw_summary_ref}`,
+    `provider=${backtest.provider}; period=${backtest.period}; status=${backtest.status ?? 'live'}; raw_ref=${backtest.raw_summary_ref}`,
   );
 
   await updateRun(runId, { status: 'risk_review' });
@@ -300,50 +303,50 @@ function inferMarket(strategy: string) {
   return 'BTCUSDT';
 }
 
-async function runBacktestWithFallback(runId: string, strategy: StrategySpec, onProgress?: ProgressTarget): Promise<BacktestResult> {
+/**
+ * Run the local deterministic backtest. On failure, return a BacktestResult
+ * flagged `status: 'failed'` with zeroed metrics and the real error in
+ * `raw_summary_ref` — we do NOT silently fabricate plausible metrics. The risk
+ * engine and UI treat a failed backtest explicitly (the orchestrator still
+ * flows through risk review so the run is auditable, but the failure is
+ * surfaced rather than hidden behind fake PnL/Sharpe).
+ */
+async function runBacktest(runId: string, strategy: StrategySpec, onProgress?: ProgressTarget): Promise<BacktestResult> {
   const progress = createProgress(runId, onProgress);
   try {
-    await progress('getagent.upload.started', 'getagent', 'started', 'Uploading generated GetAgent package to GetAgent');
-    const result = await runGetAgentBacktest(runId, strategy);
-    await progress('getagent.run.completed', 'getagent', 'completed', 'GetAgent run completed', result.raw_summary_ref);
+    await progress('backtest.fetch.started', 'backtest', 'started', 'Fetching Bitget public klines and simulating strategy');
+    const result = await runLocalBacktest(runId, strategy);
+    await progress('backtest.fetch.completed', 'backtest', 'completed', 'Local backtest completed', result.raw_summary_ref);
     return result;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown GetAgent failure';
+    const message = error instanceof Error ? error.message : 'Unknown backtest failure';
     await appendAndProgress(
       progress,
       event({
         runId,
-        type: 'getagent.backtest.failed',
-        actor: 'getagent',
+        type: 'backtest.fetch.failed',
+        actor: 'backtest',
         status: 'failed',
         input: strategy.strategy_id,
-        output: `GetAgent unavailable, using degraded estimate: ${message}`,
-        rawRef: 'getagent-error',
+        output: `Local backtest failed: ${message}`,
+        rawRef: 'local-backtest-error',
       }),
     );
-    return degradedBacktest(runId, strategy, message);
+    return {
+      backtest_id: makeId('failed_backtest'),
+      run_id: runId,
+      provider: 'local_deterministic',
+      period: 'unavailable',
+      pnl: 0,
+      sharpe: 0,
+      win_rate: 0,
+      max_drawdown: 0,
+      trade_count: 0,
+      raw_summary_ref: `local-backtest-failed:${message.slice(0, 160)}`,
+      status: 'failed',
+      created_at: nowIso(),
+    };
   }
-}
-
-function degradedBacktest(runId: string, strategy: StrategySpec, reason: string): BacktestResult {
-  const text = `${strategy.raw_prompt} ${JSON.stringify(strategy.structured_strategy)}`.toLowerCase();
-  const dangerous = /martingale|摊平|unlimited|不断加仓|averaging|leverage|杠杆|高杠杆/.test(text);
-  const missingStop = !strategy.structured_strategy.stop_loss;
-  const controlled = Boolean(strategy.structured_strategy.stop_loss && strategy.structured_strategy.position_limit);
-
-  return {
-    backtest_id: makeId('degraded_backtest'),
-    run_id: runId,
-    provider: 'degraded_estimate',
-    period: 'degraded-estimate-no-getagent',
-    pnl: dangerous ? -6.5 : controlled ? 4.2 : 0,
-    sharpe: dangerous ? 0.12 : controlled ? 0.72 : 0.35,
-    win_rate: dangerous ? 35 : controlled ? 51 : 45,
-    max_drawdown: dangerous ? 32 : missingStop ? 22 : 12,
-    trade_count: 0,
-    raw_summary_ref: `getagent-fallback:${reason.slice(0, 120)}`,
-    created_at: nowIso(),
-  };
 }
 
 function createProgress(runId: string, onProgress?: ProgressTarget): ProgressEmitter {

@@ -1,46 +1,47 @@
 # TradeTrace — Flight Recorder for AI Trading Agents
 
-> An open-source AI trading infrastructure: record *why* an agent acted, backtest the strategy, score risk, gate execution, and keep the whole run replayable.
+> An open-source AI trading infrastructure: record *why* an agent acted, backtest the strategy on real market data, score risk, gate execution, and keep the whole run replayable.
 >
 > 中文版: [README.md](README.md)
 
 TradeTrace turns every AI trading-agent run into a replayable, auditable trail:
 
 ```text
-NL strategy → Qwen parse → Bitget Skill Evidence Pack → GetAgent backtest
+NL strategy → Qwen parse → Bitget Skill Evidence Pack → Local deterministic backtest (real Bitget public klines)
             → Risk Ledger → Approval Gate → Paper / Replay execution → Post-run Report
 ```
 
 AI trading agents are powerful but unsafe as black boxes — you can't see *why* a decision was made, and tool calls, backtests, risk checks, approvals, and execution are scattered everywhere, with no way to replay a failed run. TradeTrace is the missing governance layer between autonomous agents and trading execution: **a black box + cockpit voice recorder for trading-agent runs.**
 
-Core stance: **risk scoring is rule-based, deterministic, and explainable; LLMs are used for parsing and reporting only — never for the final safety decision.**
+Core stance: **risk scoring is rule-based, deterministic, and explainable; LLMs are used for parsing and reporting only — never for the final safety decision. Backtest metrics are computed on Bitget's official public market data — real and reproducible, never fabricated.**
 
-The project originated from the [Bitget AI Hackathon](https://bitget-ai.gitbook.io/hackathon) Track 2 (Infra), but is designed to keep growing as general infrastructure past the event.
-
----
-
-## Table of contents
-
-- [Installation](#installation)
-- [Channels](#channels)
-- [Usage examples](#usage-examples)
-- [Run logs & reproduction](#run-logs--reproduction)
-- [How a run flows](#how-a-run-flows)
-- [API reference](#api-reference)
-- [Project layout](#project-layout)
-- [Safety notes](#safety-notes)
+The project originated from the [Bitget AI Hackathon](https://bitget-ai.gitbook.io/hackathon) Track 2 (Trading Infra), but is designed to keep growing as general infrastructure past the event.
 
 ---
 
-## Installation
+## What problem it solves
+
+The official Track 2 (Trading Infra) judging criterion, verbatim: **"Can other developers actually integrate it with low friction; does it genuinely solve a pain point rather than reproducing existing tools."** TradeTrace targets the missing layer for AI trading agents — **observability, auditability, approval, replay, and post-run analysis**:
+
+- You can't see *why* an agent made a decision.
+- Tool calls, backtest output, risk checks, approvals, and execution events are scattered across logs / dashboards / chats.
+- There is no **standard audit trail scoped to a single run**.
+- Risk gates are often implicit, or missing entirely.
+- Failed or dangerous runs can't be cleanly replayed or reviewed.
+
+TradeTrace is not another trading chatbot or strategy generator. It records the full lifecycle of one trading-agent run so it can be replayed.
+
+---
+
+## Install
 
 ### Prerequisites
 
 - **Node.js ≥ 18.17** (Next.js requirement; 20 LTS recommended)
-- **npm** (bundled with Node)
-- Outbound internet: calls Qwen and Bitget endpoints
+- **npm** (ships with Node)
+- Internet access: needs the Qwen API; backtesting hits Bitget public market endpoints (**no Bitget key required**)
 
-### 1. Clone and install
+### 1. Clone & install
 
 ```bash
 git clone <repo-url>
@@ -48,26 +49,23 @@ cd bitget-hackathon-infra
 npm install
 ```
 
-### 2. Configure environment
+### 2. Configure env
 
 ```bash
 cp .env.example .env
 ```
 
-Open `.env` and fill it in. **Only `QWEN_API_KEY` and `BITGET_API_KEY` are required** — without them you cannot create new runs (the Web UI still lets you browse the bundled samples).
+Open `.env` and fill it in. **Only `QWEN_API_KEY` is required** — backtesting uses Bitget's public market endpoints and needs no Bitget key.
 
-| Variable | Required | Notes |
+| Var | Required | Notes |
 |---|---|---|
-| `QWEN_API_KEY` | **yes** | Qwen API key — strategy parsing + post-run report. |
-| `QWEN_BASE_URL` | prefilled | Qwen endpoint base URL. |
-| `QWEN_MODEL` | prefilled | Model name to use. |
-| `BITGET_API_KEY` | **yes** | Bitget GetAgent / Playbook access key, sent as the `ACCESS-KEY` header for backtests. |
-| `BITGET_SECRET_KEY` | optional | Reserved for signed endpoints; **not read by current code** — kept for a future signer. |
-| `BITGET_PASSPHRASE` | optional | Same as above — reserved. |
-| `TELEGRAM_BOT_TOKEN` | optional | Leave empty to run the Web UI only; set to enable the Telegram bot. |
+| `QWEN_API_KEY` | **yes** | Qwen API key for strategy parsing + post-run reports. The hackathon issues one (via the Bitget proxy base url); you can also use your own Qwen key. |
+| `QWEN_BASE_URL` | default set | Qwen endpoint (hackathon proxy: `https://hackathon.bitgetops.com/v1`). |
+| `QWEN_MODEL` | default set | Model name (`qwen3.6-plus`). |
+| `TELEGRAM_BOT_TOKEN` | optional | Leave empty to run Web UI only; set to enable the Telegram bot. |
 | `NEXT_PUBLIC_APP_URL` | optional | Used to build run links returned by the Telegram API. Defaults to `http://localhost:3000`. |
 
-> Note: local and online use the **exact same code path**. If the backtest endpoint fails, the system records `getagent.backtest.failed`, falls back to a degraded estimate, and still produces a risk ledger and report — it never crashes mid-run.
+> **Backtesting needs no Bitget key.** The local deterministic backtest engine ([agent/tools/local-backtest.ts](agent/tools/local-backtest.ts)) calls Bitget's public kline endpoint `https://api.bitget.com/api/v2/spot/market/candles` directly — the same endpoint the Agent Hub `spot_get_candles` / `futures_get_candles` skills hit. Public, unauthenticated.
 
 ### 3. Run
 
@@ -75,88 +73,94 @@ Open `.env` and fill it in. **Only `QWEN_API_KEY` and `BITGET_API_KEY` are requi
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) (redirects to `/en` or `/zh`).
+Open [http://localhost:3000](http://localhost:3000). Even without `QWEN_API_KEY`, the app still serves the bundled [sample runs](#sample-inputs--outputs-reproducible-without-any-api).
 
 ### Optional: check / build
 
 ```bash
 npm run typecheck   # TypeScript type check
 npm run build       # production build
-npm run start       # start in production mode
+npm run start       # run in production mode
 ```
+
+---
+
+## Quick start
+
+1. `npm install && cp .env.example .env`, fill in `QWEN_API_KEY`.
+2. `npm run dev`, open [http://localhost:3000/runs/new](http://localhost:3000/runs/new).
+3. Paste a natural-language strategy (or use a template) and start — the console streams Qwen parse, Evidence Pack, local backtest, risk score, approval, and report events live.
+4. Browse the two captured real runs in [samples/](samples/) (healthy +8.3% / dangerous blocked), reproducible with no API.
 
 ---
 
 ## Channels
 
-The system has two entry points that **share the same Run store** — a run started in Telegram is visible and approvable in the Web UI, and vice versa.
+Two entry points share **one run store** — a run started in Telegram is visible and approvable in the Web UI, and vice versa.
 
-### A. Web UI (primary surface)
+### A. Web UI (primary)
 
-- Routes: `/zh/...` (Chinese, default), `/en/...` (English). Root `/` 307-redirects to `/zh`; toggle `中 / EN` in the top-right.
-- Pages:
-  - `/zh` — landing
-  - `/zh/runs/new` — new run (paste an NL strategy)
-  - `/zh/runs/<runId>` — run detail: Flight Recorder timeline, Risk Ledger, approval buttons, post-run report
-  - `/zh/dashboard` — dashboard
-- When a run enters `awaiting_approval`, the detail page shows **Approve / Reject** buttons (human-in-the-loop).
+- Pages (**English-only, flat routes**):
+  - `/` — landing
+  - `/runs/new` — new run (paste an NL strategy, streaming console)
+  - `/runs/<runId>` — run detail: Flight Recorder timeline, Risk Ledger, backtest evidence, approval buttons, post-run report
+  - `/dashboard` — dashboard
+- When a run reaches `awaiting_approval`, the detail page shows **Approve / Reject** buttons (human-in-the-loop).
 
-### B. Telegram bot (complementary channel)
+### B. Telegram Bot (complementary)
 
-**You don't need a real Telegram connection locally** — you can simulate the webhook (see [Usage examples](#usage-examples)). To connect for real:
+**You don't need a real Telegram connection locally** — you can simulate the webhook (see [Examples](#examples)). Real setup:
 
-1. Create a bot via [@BotFather](https://t.me/BotFather), copy `TELEGRAM_BOT_TOKEN` into `.env`.
-2. Deploy to a public host (e.g. Vercel) and set `NEXT_PUBLIC_APP_URL` to your domain.
-3. Register the webhook:
+1. Create a bot via [@BotFather](https://t.me/BotFather), put `TELEGRAM_BOT_TOKEN` in `.env`.
+2. Deploy publicly (e.g. Vercel) and set `NEXT_PUBLIC_APP_URL` to your domain.
+3. Set the webhook:
 
    ```bash
    curl "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook?url=https://your-domain/api/telegram"
    ```
 
-4. Use the commands in Telegram:
+4. Use commands in Telegram:
 
    ```text
-   /run <NL strategy>           # start a run
-   /status <run_id>             # query status
-   /approve <run_id>            # approve execution
-   /reject <run_id> <reason>    # reject execution
-   /report <run_id>             # fetch report digest
+   /run <NL strategy>        # start a run
+   /status <run_id>          # query status
+   /approve <run_id>         # approve execution
+   /reject <run_id> <reason> # reject execution
+   /report <run_id>          # fetch report summary
    ```
-
-> Note: run links returned by Telegram look like `https://domain/runs/<runId>` (no locale prefix, for stable bot/curl access). Prepend `/zh` or `/en` in the browser to view the localized page.
 
 ---
 
-## Usage examples
+## Examples
 
-> The `curl` commands assume `npm run dev` is running on `localhost:3000` and `QWEN_API_KEY` + `BITGET_API_KEY` are set. API routes carry **no locale prefix**.
+> The `curl` commands assume `npm run dev` is running on `localhost:3000` and `QWEN_API_KEY` is set.
 
-### Example 1: start a run (good strategy)
+### Example 1: start a run (healthy strategy)
 
 ```bash
 curl -X POST http://localhost:3000/api/runs \
   -H 'content-type: application/json' \
-  -d '{"strategy":"When BTC on 1h EMA20 crosses above EMA50 and RSI crosses from 45 to 55, go long. Use 1.5% stop loss, 4% take profit, max position 15%, pause after two consecutive losses."}'
+  -d '{"strategy":"Short BTCUSDT on 1h timeframe using EMA12 crossing below EMA26 as the entry, with a 2% stop loss and 5% take profit. Trend-following short only."}'
 ```
 
-Expect a `RunBundle` where `run.status` is `completed`/`awaiting_approval`/`blocked`, `risk.level` is `Low`, `final_decision` is `Go`. A run log folder is also written under `logs/<runId>/<timestamp>/` (see below).
+Expect a `RunBundle` with `run.status = awaiting_approval`, `backtest.provider = local_deterministic`, and `backtest.pnl` computed from real Bitget klines (not fabricated). A per-run log folder is written under `logs/<runId>/<timestamp>/`.
 
-### Example 2: fetch run detail
+### Example 2: query run detail
 
 ```bash
 curl http://localhost:3000/api/runs/<runId>
 ```
 
-Returns the full bundle (timeline events, risk ledger, backtest, report).
+Returns the full bundle (timeline events, risk ledger, backtest with explainable `backtest.notes`, report).
 
 ### Example 3: approve / reject (human-in-the-loop)
 
 ```bash
-# Approve (only effective when status is awaiting_approval)
+# approve (only when status is awaiting_approval)
 curl -X POST http://localhost:3000/api/runs/<runId>/approve \
   -H 'content-type: application/json' -d '{"reason":"checked risk ledger"}'
 
-# Reject
+# reject
 curl -X POST http://localhost:3000/api/runs/<runId>/reject \
   -H 'content-type: application/json' -d '{"reason":"drawdown too high"}'
 ```
@@ -169,105 +173,89 @@ curl -X POST http://localhost:3000/api/runs \
   -d '{"strategy":"Whenever price drops, keep adding to the position until it rebounds. Use high leverage and recover losses as fast as possible."}'
 ```
 
-Expect: `risk.level = High`, `recommendation = Block`, `run.status = blocked`, `final_decision = Block`.
+Expect: `risk.level = High`, `score = 100`, `recommendation = Block`, `run.status = blocked`. The risk ledger lists the critical rules hit (`no-martingale` critical, `high-leverage`, `missing-stop-loss`).
 
-### Example 5: simulate the Telegram webhook locally
+### Example 5: simulate a Telegram webhook locally
 
 ```bash
 curl -X POST http://localhost:3000/api/telegram \
   -H 'content-type: application/json' \
-  -d '{"message":{"chat":{"id":1},"text":"/run When BTC 1h EMA20 crosses above EMA50, go long, 1.5% stop loss, max position 15%."}}'
+  -d '{"message":{"chat":{"id":1},"text":"/run Short BTCUSDT when EMA12 crosses below EMA26, 2% stop loss, 5% take profit."}}'
 ```
 
-Returns a `sendMessage`-shaped JSON containing the created `run_id` and link.
+Returns a `sendMessage`-shaped JSON with the created `run_id` and link.
 
 ---
 
-## Run logs & reproduction
+## Logs & reproducibility
 
-### Run logs (with timestamps and call volume)
+### Run logs (timestamped, with call counts)
 
-**Every run produces a structured log on disk**, grouped by run and timestamp:
+**Every run writes a structured log locally**, grouped by run + timestamp:
 
 ```text
 logs/
   run_001_a1b2c3/                 # grouped by runId (multiple lifecycles of one run cluster here)
-    20260618-080322/              # timestamp of this lifecycle (UTC)
-      run.log                     # NDJSON, one structured line per log entry
-      summary.json                # this call's metadata + per-scope call counts (call volume)
+    20260618-080322/              # this lifecycle's timestamp (UTC)
+      run.log                     # NDJSON, one structured log line per entry
+      summary.json                # call metadata + per-scope call counts
 ```
 
-- **`run.log`**: one JSON object per line with `ts` (ISO timestamp), `level`, `scope`, `message`, plus provider call-volume fields such as `status` / `attempt` / `duration` / `baseUrl` / `model`. All sensitive fields (keys, tokens, Bearer) are redacted before writing.
-- **`summary.json`**: aggregates this run's `call_counts_by_scope` (call counts per scope) and `total_log_calls`, so you can see at a glance how many times Qwen / GetAgent were called.
+- **`run.log`**: one JSON per line — `ts` (ISO), `level`, `scope`, `message`, plus provider fields like `status` / `attempt` / `url` / `model`. All sensitive fields (key, token, Bearer) are redacted before writing.
+- **`summary.json`**: aggregates `call_counts_by_scope` and `total_log_calls`, so you can see at a glance how many Qwen / local-backtest calls this run made.
 
-> These logs are **generated automatically by the code at runtime** — not hand-written samples. `logs/` is in `.gitignore` and never committed: a judge running `npm run dev` and any example above will see real logs appear under `logs/`.
+> These logs are **generated by code at runtime**, not hand-written. `logs/` is in `.gitignore` — a judge running `npm run dev` and any example above will see real logs under `logs/`.
 
-`run.log` single-line format (illustrative — actual content is produced by a run):
+### Sample inputs + outputs (reproducible without any API)
 
-```json
-{"ts":"2026-06-18T08:03:22.411Z","level":"info","scope":"qwen.strategy-parser","message":"chat completions returned","runId":"run_001_a1b2c3","baseUrl":"https://hackathon.bitgetops.com/v1","model":"qwen3.6-plus","status":200,"ok":true}
-```
+`samples/` ships two full input→output reproductions:
 
-`summary.json` format (illustrative — actual content is produced by a run):
+- **Inputs**: [`samples/strategies.md`](samples/strategies.md) — the two raw strategies (healthy / dangerous).
+- **Outputs**: [`samples/run-success.json`](samples/run-success.json) (trend short, **+8.3% PnL / Sharpe 2.95**, Review→approved→completed) and [`samples/run-blocked.json`](samples/run-blocked.json) (martingale + high leverage, High/100, blocked).
 
-```json
-{
-  "run_id": "run_001_a1b2c3",
-  "started_at": "2026-06-18T08:03:22.000Z",
-  "ended_at": "2026-06-18T08:03:30.000Z",
-  "log_file": "run.log",
-  "call_counts_by_scope": {
-    "qwen.strategy-parser": 2,
-    "getagent.backtest": 4,
-    "getagent.upload": 1,
-    "getagent.run": 1,
-    "getagent.poll": 3
-  },
-  "total_log_calls": 11
-}
-```
-
-### Sample inputs + outputs (reproducible without an API)
-
-`samples/` provides two complete "input → output" reproduction artifacts:
-
-- **Inputs**: [`samples/strategies.md`](samples/strategies.md) — the two strategy texts (good / dangerous).
-- **Outputs**: [`samples/run-success.json`](samples/run-success.json) (Low risk, `Go`, completed), [`samples/run-blocked.json`](samples/run-blocked.json) (High risk, `Block`, blocked).
-
-Both outputs are complete `RunBundle`s (`{ run, strategy, backtest, risk, approval, report, events, evidence }`) with `backtest.provider = replay_fixture`, so they replay identically regardless of API availability. `GET /api/runs` lists these samples alongside live runs.
+Both are complete `RunBundle` objects **captured from real local backtests** (provenance recorded in `backtest.notes`). Stored as `backtest.provider = replay_fixture` for offline replay, but the metrics are **not fabricated**. `GET /api/runs` lists these samples too, so the app is demoable with no key.
 
 ---
 
-## How a run flows
+## One run, end to end
 
 ```text
-NL strategy -> Qwen parse -> Bitget Skill Evidence Pack -> GetAgent backtest
-            -> Risk Ledger -> Approval gate
-                                       |
-                                       v
-       Report <- Replay/execution <- paper-trading or replay run <- decision (Go / Review / Block)
+NL strategy -> Qwen parse -> Bitget Skill Evidence Pack -> Local deterministic backtest (real Bitget public klines)
+              -> Risk Ledger -> Approval Gate
+                              |
+                              v
+   Post-run Report <- Replay / execution <- paper or replay run <- decision (Go / Review / Block)
 ```
+
+### Backtest engine (local, deterministic, real data)
+
+[agent/tools/local-backtest.ts](agent/tools/local-backtest.ts):
+
+1. Calls Bitget's public kline endpoint for historical OHLCV (BTCUSDT etc., `1h` granularity, no key), cached to `data/klines-cache/` for reproducibility.
+2. Interprets the Qwen-parsed `StructuredStrategy` into executable rules (EMA cross / RSI / momentum), honoring stop-loss / take-profit / direction.
+3. Runs a **deterministic per-bar simulation** over the series (single position, fractional sizing, bar-close evaluation) to produce real PnL / Sharpe / max-drawdown / win-rate / trade-count.
+4. **Is honest**: this is a replay simulation on public data, not live exchange matching. Every backtest's `backtest.notes` records the interpretation and data source.
+
+Backtest failures are **never silently degraded** — they surface as `status: 'failed'` with the real reason (e.g. kline fetch failed) shown in the UI.
 
 ### Evidence Pack skill priority
 
-1. `technical-analysis` — highest value for validating whether the strategy's trigger matches the chart context.
-2. `sentiment-analyst` — pre-execution risk signal for crowded or emotional trades.
-3. `news-briefing` — headline / regulatory / exchange shocks before approval.
-4. `market-intel` — liquidity / volatility / context signals.
-5. `macro-analyst` — lower-frequency veto layer for CPI / FOMC / rates risk.
+1. `technical-analysis` — highest priority; validates that strategy triggers match chart context.
+2. `sentiment-analyst` — pre-execution crowd / sentiment risk.
+3. `news-briefing` — headline / regulatory / exchange-level shocks.
+4. `market-intel` — liquidity / volatility / background signals.
+5. `macro-analyst` — low-frequency veto layer (CPI / FOMC / rate risk).
 
-The public docs do not expose fixed REST endpoints for these five Skill Hub skills, so the Evidence Pack uses Qwen with the five documented Bitget personas to keep local and deployed behavior identical. If Bitget later exposes official callable skill endpoints, the swap point is [agent/tools/bitget-skill-evidence.ts](agent/tools/bitget-skill-evidence.ts).
+Bitget does not expose a fixed REST surface for these five Skill Hub skills, so the Evidence Pack simulates the five personas with Qwen, keeping local and deployed behavior identical. When Bitget opens callable skill endpoints, the swap point is [agent/tools/bitget-skill-evidence.ts](agent/tools/bitget-skill-evidence.ts).
 
 ---
 
-## API reference
-
-API routes carry no locale prefix (stable paths for Telegram webhooks, curl, and browser fetch):
+## API cheat sheet
 
 ```text
-GET  /api/runs                  # list all runs (including samples)
+GET  /api/runs                  # list all runs (incl. samples)
 POST /api/runs                  # start a run   body: {"strategy": "...", "market"?: "..."}
-POST /api/runs/stream           # streamed start (NDJSON progress stream)
+POST /api/runs/stream           # streaming start (NDJSON progress)
 GET  /api/runs/:runId           # run detail
 POST /api/runs/:runId/approve   # approve       body: {"reason": "..."}
 POST /api/runs/:runId/reject    # reject        body: {"reason": "..."}
@@ -277,39 +265,42 @@ POST /api/telegram              # Telegram webhook entry
 
 ---
 
-## Project layout
+## Project structure
 
 ```text
 .
 ├── README.md / README.en.md
-├── .env.example                # env template (annotates variables actually read by code)
-├── i18n/ + messages/           # next-intl Chinese/English
-├── proxy.ts                    # next-intl route proxy
+├── .env.example                # env template (only QWEN_* required; backtest needs no Bitget key)
 ├── agent/
 │   ├── agent.ts                # main run lifecycle (startRun / approve / reject / execute)
-│   ├── instructions.md         # agent identity & safety boundaries
-│   ├── tools/                  # Qwen parse, GetAgent backtest, Risk, Trace, Evidence, Report, Approval
-│   ├── skills/                 # risk ledger rules, report format
-│   ├── subagents/              # trace analyst, risk officer, incident writer
-│   ├── channels/               # web + telegram entry points
-│   └── schedules/              # paper-trading monitor
-├── app/
-│   ├── [locale]/               # localized pages (/zh/..., /en/...)
-│   └── api/                    # routes without locale prefix
-├── lib/                        # types, env, store, redaction, logger (with on-disk logging)
-├── samples/                    # replay fixtures + input strategy notes (strategies.md)
-├── data/                       # local run / event store (JSON, gitignored)
-└── logs/                       # per-run API call logs generated at runtime (gitignored)
+│   ├── instructions.md         # agent identity & safety bounds
+│   ├── tools/
+│   │   ├── local-backtest.ts   # local deterministic backtest engine (Bitget public klines, pure TS)
+│   │   ├── qwen-strategy-parser.ts
+│   │   ├── bitget-skill-evidence.ts
+│   │   ├── risk-engine.ts      # deterministic, explainable risk rules
+│   │   ├── approval-gate.ts
+│   │   ├── report-generator.ts
+│   │   └── trace-event.ts
+│   ├── skills/ subagents/ channels/ schedules/
+├── app/                        # Next.js App Router (flat routes, English)
+│   ├── page.tsx runs/ dashboard/
+│   └── api/                    # runs / telegram routes
+├── components/                 # timeline / risk-ledger / evidence-pack / report-panel / approval-actions
+├── lib/                        # types, env, store, redaction, logger (disk logs)
+├── samples/                    # replay fixtures (captured from real backtests) + strategies.md
+├── data/                       # local run/event store + kline cache (JSON, gitignored)
+└── logs/                       # runtime per-run API call logs (gitignored)
 ```
 
 ---
 
-## Safety notes
+## Security notes
 
-- The MVP **does not** execute real-money trades (the execution layer is a replay adapter that explicitly sends no real order).
-- No sample run, log, or Web UI ever stores or displays secrets: logs pass through `redactObject`, and `.env` is in `.gitignore`.
-- Risk scoring is **rule-based and explainable**; LLMs handle parsing and reporting only, not the final safety decision.
-- Without `QWEN_API_KEY` / `BITGET_API_KEY`, new runs cannot be created; the app serves replay / sample data only.
+- The MVP **never** executes real-money trades (the execution layer is a replay adapter that explicitly sends no real orders).
+- No sample run, log, or Web UI view **ever** stores or shows secrets: logs pass through `redactObject`, `.env` is in `.gitignore`.
+- Risk scoring is **rule-based and explainable**; LLMs only parse and report, never decide.
+- Backtesting needs **no** Bitget key; only a missing `QWEN_API_KEY` blocks new runs, and the app still serves replay / sample data.
 
 ## License
 

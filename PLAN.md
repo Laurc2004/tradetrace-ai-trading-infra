@@ -1,5 +1,10 @@
 # TradeTrace 实施计划
 
+> ⚠️ **实现状态更新（2026-06-20 重设计）**：Playbook 控制面连不通，回测已改为**本地确定性引擎**
+> （[agent/tools/local-backtest.ts](agent/tools/local-backtest.ts)，Bitget 公共 K线，无需 key）。
+> 本文 `GetAgent / Playbook` 字样为历史规划，实际实现见 [README.md](README.md)。
+> Web UI 为英文单语言扁平路由（i18n 已移除）。
+
 > 范围：TradeTrace AI 交易基础设施的实施方案。
 > 起点：受 [Bitget AI Hackathon](https://bitget-ai.gitbook.io/hackathon) Track 2
 > （Infra）启发，目标是一个赛后仍会持续生长的项目。

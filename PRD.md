@@ -1,5 +1,11 @@
 # TradeTrace 飞行记录器 — 产品需求文档（PRD）
 
+> ⚠️ **实现状态更新（2026-06-20 重设计）**：本文档成文较早，其中所有 **GetAgent / Playbook 回测**
+> 的描述已被替换为**本地确定性回测引擎**（[agent/tools/local-backtest.ts](agent/tools/local-backtest.ts)），
+> 数据来自 **Bitget 公共 K线端点**（`spot_get_candles` / `futures_get_candles`），**无需任何 Bitget key**。
+> 原因：Playbook 控制面连不通。新建运行只需 `QWEN_API_KEY`。Web UI 为英文单语言扁平路由（i18n 已移除）。
+> 其余设计（飞行记录器、风险账本、审批、回放、报告）保持不变。以 [README.md](README.md) 为准。
+
 > 项目：TradeTrace AI 交易基础设施
 > 起点：受 [Bitget AI Hackathon](https://bitget-ai.gitbook.io/hackathon) Track 2
 > （Infra）启发，目标是一个赛后仍会持续生长的项目。

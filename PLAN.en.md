@@ -1,5 +1,7 @@
 # TradeTrace Implementation Plan
 
+> ⚠️ **Implementation status update (2026-06-20 redesign)**: The Playbook control plane was unreachable, so backtesting is now a **local deterministic engine** ([agent/tools/local-backtest.ts](agent/tools/local-backtest.ts), Bitget public klines, no key needed). `GetAgent / Playbook` wording below is historical planning; actual implementation is in [README.en.md](README.en.md). The Web UI is English-only with flat routes (i18n removed).
+
 > Scope: implementation plan for the TradeTrace AI trading infrastructure.
 > Origin: inspired by [Bitget AI Hackathon](https://bitget-ai.gitbook.io/hackathon)
 > Track 2 (Infra). Designed to keep growing past the hackathon.

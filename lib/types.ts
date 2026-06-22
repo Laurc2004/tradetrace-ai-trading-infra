@@ -19,7 +19,7 @@ export type EventActor =
   | 'user'
   | 'agent'
   | 'qwen'
-  | 'getagent'
+  | 'backtest'
   | 'skill_hub'
   | 'risk_engine'
   | 'approval'
@@ -86,7 +86,7 @@ export interface EvidencePack {
 export interface BacktestResult {
   backtest_id: string;
   run_id: string;
-  provider: 'bitget_playbook' | 'replay_fixture' | 'degraded_estimate';
+  provider: 'local_deterministic' | 'replay_fixture' | 'degraded_estimate' | 'bitget_playbook';
   period: string;
   pnl: number;
   sharpe: number;
@@ -94,6 +94,8 @@ export interface BacktestResult {
   max_drawdown: number;
   trade_count: number;
   raw_summary_ref: string;
+  status?: 'live' | 'failed';
+  notes?: string[];
   created_at: string;
 }
 

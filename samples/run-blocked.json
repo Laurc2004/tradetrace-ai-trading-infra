@@ -1,60 +1,302 @@
 {
   "run": {
-    "run_id": "sample_blocked",
-    "source_channel": "telegram",
+    "run_id": "run_002_061635",
+    "source_channel": "web",
     "status": "blocked",
     "user_input": "Whenever price drops, keep adding to the position until it rebounds. Use high leverage and recover losses as fast as possible.",
     "market": "BTCUSDT",
-    "started_at": "2026-06-18T06:10:00.000Z",
-    "ended_at": "2026-06-18T06:10:09.000Z",
+    "started_at": "2026-06-20T11:09:35.388Z",
     "final_decision": "Block",
-    "report_id": "report_sample_blocked"
+    "ended_at": "2026-06-20T11:11:00.326Z",
+    "report_id": "report_002_5b4221"
   },
+  "events": [
+    {
+      "event_id": "evt_009_294230",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:09:35.390Z",
+      "type": "strategy.input.received",
+      "actor": "user",
+      "status": "completed",
+      "input_summary": "Whenever price drops, keep adding to the position until it rebounds. Use high leverage and recover losses as fast as possible.",
+      "output_summary": "Strategy input accepted and run created.",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_010_94967f",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:10:25.448Z",
+      "type": "strategy.parsed",
+      "actor": "qwen",
+      "status": "completed",
+      "input_summary": "Whenever price drops, keep adding to the position until it rebounds. Use high leverage and recover losses as fast as possible.",
+      "output_summary": "NOT SPECIFIED long Not specified",
+      "duration_ms": 50056
+    },
+    {
+      "event_id": "evt_011_6e42cd",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:10:25.457Z",
+      "type": "skill_hub.evidence.started",
+      "actor": "skill_hub",
+      "status": "started",
+      "input_summary": "strategy_002_1123e5",
+      "output_summary": "Collecting macro, news, sentiment, technical, and market-intel evidence.",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_012_fe7b7a",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:10:59.920Z",
+      "type": "skill_hub.evidence.completed",
+      "actor": "skill_hub",
+      "status": "completed",
+      "input_summary": "strategy_002_1123e5",
+      "output_summary": "5 skills collected, aggregate signal: risk-off",
+      "duration_ms": 34461,
+      "raw_ref": "qwen_skill_persona"
+    },
+    {
+      "event_id": "evt_013_1fc351",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:10:59.925Z",
+      "type": "backtest.started",
+      "actor": "backtest",
+      "status": "started",
+      "input_summary": "{\"symbol\":\"NOT SPECIFIED\",\"timeframe\":\"Not specified\",\"direction\":\"long\",\"entry_conditions\":[\"Add to position on every price drop\",\"Continue averaging down until price rebounds\"...",
+      "output_summary": "Fetching Bitget public klines and running the deterministic local backtest.",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_014_5f7107",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:11:00.318Z",
+      "type": "backtest.completed",
+      "actor": "backtest",
+      "status": "completed",
+      "input_summary": "strategy_002_1123e5",
+      "output_summary": "PnL -1.99%, Sharpe -0.71, Max DD 8.2%, 11 trades",
+      "duration_ms": 391,
+      "raw_ref": "local:BTCUSDT:1h:ema_cross:bars=1000"
+    },
+    {
+      "event_id": "evt_015_8d828c",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:11:00.322Z",
+      "type": "risk.scored",
+      "actor": "risk_engine",
+      "status": "blocked",
+      "input_summary": "local_backtest_002_c08b70/strategy_002_1123e5",
+      "output_summary": "High risk (100/100), recommendation: Block",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_016_c7fcae",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:11:00.325Z",
+      "type": "run.blocked",
+      "actor": "approval",
+      "status": "blocked",
+      "input_summary": "Block",
+      "output_summary": "High risk run was blocked before execution.",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_017_de3c78",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:11:57.261Z",
+      "type": "run.report.generated",
+      "actor": "reporter",
+      "status": "completed",
+      "input_summary": "Run evidence bundle",
+      "output_summary": "Run run_002_061635 was automatically blocked due to extreme pre-execution risk. The proposed strategy employs a high-leverage, unbounded martingale/averaging-down approach on BT...",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_018_09c349",
+      "run_id": "run_002_061635",
+      "timestamp": "2026-06-20T11:13:25.306Z",
+      "type": "run.report.generated",
+      "actor": "reporter",
+      "status": "completed",
+      "input_summary": "Run evidence bundle",
+      "output_summary": "Run run_002_061635 was automatically blocked due to extreme pre-execution risk. The proposed BTCUSDT strategy employs a high-leverage, unbounded martingale/averaging-down approa...",
+      "duration_ms": 0
+    }
+  ],
   "strategy": {
-    "strategy_id": "strategy_sample_blocked",
-    "run_id": "sample_blocked",
+    "strategy_id": "strategy_002_1123e5",
+    "run_id": "run_002_061635",
     "raw_prompt": "Whenever price drops, keep adding to the position until it rebounds. Use high leverage and recover losses as fast as possible.",
     "structured_strategy": {
-      "symbol": "BTCUSDT",
-      "timeframe": "1h",
-      "direction": "unknown",
+      "symbol": "NOT SPECIFIED",
+      "timeframe": "Not specified",
+      "direction": "long",
       "entry_conditions": [
-        "Price drops"
+        "Add to position on every price drop",
+        "Continue averaging down until price rebounds"
       ],
       "exit_conditions": [
-        "Rebound"
+        "Close position when price rebounds to breakeven",
+        "Exit once losses are recovered"
       ],
-      "stop_loss": null,
-      "take_profit": null,
-      "position_limit": null,
+      "stop_loss": "No explicit stop loss defined",
+      "take_profit": "Close position upon rapid loss recovery,Target quick rebound to initial entry or slight profit",
+      "position_limit": "No maximum position size specified,Continue adding until rebound occurs",
       "risk_constraints": [
-        "Potential leverage or averaging-down behavior"
+        "Use high leverage",
+        "Aggressive loss recovery prioritized over capital preservation",
+        "No defined maximum drawdown limit"
       ],
       "unknowns": [
-        "Trade direction is not explicit"
+        "Specific trading symbol or asset",
+        "Trading timeframe",
+        "Exact price drop threshold for adding positions",
+        "Leverage multiplier value",
+        "Maximum allowable position size or margin limit",
+        "Rebound percentage or price target for exit",
+        "Exchange or broker margin requirements"
       ]
     },
     "confidence_notes": [
-      "Sample run fixture for blocked incident demo."
+      "Strategy describes a high-risk martingale or grid averaging-down approach",
+      "Lacks explicit risk management, stop-loss, and position sizing rules",
+      "High leverage combined with unlimited averaging down significantly increases liquidation risk",
+      "Not suitable for trending or highly volatile markets without strict capital controls"
     ],
-    "created_at": "2026-06-18T06:10:02.000Z"
+    "created_at": "2026-06-20T11:10:25.441Z"
+  },
+  "evidence": {
+    "evidence_id": "evidence_002_2afd6a",
+    "run_id": "run_002_061635",
+    "provider": "qwen_skill_persona",
+    "skills": [
+      {
+        "skill": "technical-analysis",
+        "status": "live",
+        "signal": "risk-off",
+        "confidence": 0.25,
+        "summary": "The strategy describes a high-leverage martingale/averaging-down approach with no stop loss, no position limits, and undefined risk parameters. It relies entirely on mean reversion to recover losses, making it highly susceptible to margin calls or liquidation during sustained downtrends. Without asset, timeframe, or leverage specifications, and given the explicit prioritization of loss recovery over capital preservation, it presents extreme pre-execution risk.",
+        "key_points": [
+          "Martingale-style position scaling without explicit stop loss or maximum size limits",
+          "High leverage combined with unlimited averaging down drastically increases liquidation probability in trending markets",
+          "Exit logic depends solely on price rebounding to breakeven or slight profit, ignoring trend continuation risk",
+          "Critical execution parameters missing: asset symbol, timeframe, leverage multiplier, drop thresholds, and exchange margin rules",
+          "Violates standard risk management frameworks; requires rigorous backtesting, strict capital allocation, and hard drawdown limits before any live deployment"
+        ],
+        "raw_ref": "qwen-skill-persona:technical-analysis"
+      },
+      {
+        "skill": "sentiment-analyst",
+        "status": "live",
+        "signal": "risk-off",
+        "confidence": 0.95,
+        "summary": "The strategy employs an aggressive martingale-style averaging-down approach with high leverage, no stop-loss, and unlimited position sizing. It lacks critical execution parameters and explicitly prioritizes rapid loss recovery over capital preservation, creating an extreme risk of margin calls or total account liquidation during sustained downtrends. Pre-execution is strongly discouraged without strict, predefined risk controls.",
+        "key_points": [
+          "Martingale-style averaging down with no stop-loss or maximum position limit",
+          "High leverage significantly amplifies liquidation risk during extended drawdowns",
+          "Exit relies entirely on unconfirmed mean-reversion without defined price targets or timeframes",
+          "Critical execution parameters (asset, timeframe, leverage, thresholds) are entirely unspecified",
+          "Explicitly deprioritizes capital preservation, violating foundational risk management principles"
+        ],
+        "raw_ref": "qwen-skill-persona:sentiment-analyst"
+      },
+      {
+        "skill": "news-briefing",
+        "status": "live",
+        "signal": "risk-off",
+        "confidence": 0.95,
+        "summary": "The proposed strategy employs an aggressive, high-leverage averaging-down approach without defined stop-losses, position limits, or maximum drawdown thresholds. While it aims for quick loss recovery, it exposes capital to catastrophic liquidation risk during sustained downtrends. The absence of critical risk parameters and market context makes it structurally unsound for live execution.",
+        "key_points": [
+          "Martingale-style averaging down with high leverage creates exponential risk exposure.",
+          "No stop-loss or maximum position limit guarantees potential total account liquidation.",
+          "Strategy assumes mean reversion without accounting for strong trending or volatile markets.",
+          "Missing critical parameters (asset, timeframe, leverage %, drop thresholds) prevent proper backtesting or risk modeling.",
+          "Prioritizes aggressive loss recovery over capital preservation, violating core risk management principles."
+        ],
+        "raw_ref": "qwen-skill-persona:news-briefing"
+      },
+      {
+        "skill": "market-intel",
+        "status": "live",
+        "signal": "risk-off",
+        "confidence": 0.1,
+        "summary": "The proposed strategy employs an aggressive, unbounded averaging-down (Martingale) approach with high leverage and no defined stop-loss or position limits. While directionally biased long, it lacks critical risk management parameters, making it highly susceptible to liquidation during sustained downtrends. Without specified asset, timeframe, or margin constraints, pre-execution viability cannot be validated. Capital preservation is explicitly deprioritized, rendering the strategy structurally unsound for live deployment.",
+        "key_points": [
+          "Unbounded averaging-down (Martingale) structure with no stop-loss or maximum position limit",
+          "High leverage combined with aggressive loss recovery prioritizes capital at extreme risk",
+          "Missing critical execution parameters: asset, timeframe, entry thresholds, leverage multiplier, and margin limits",
+          "Assumes mean-reversion without accounting for trending or black-swan downside scenarios",
+          "Structurally prone to margin calls and liquidation; requires strict risk controls before any live deployment"
+        ],
+        "raw_ref": "qwen-skill-persona:market-intel"
+      },
+      {
+        "skill": "macro-analyst",
+        "status": "live",
+        "signal": "risk-off",
+        "confidence": 0.9,
+        "summary": "The proposed strategy is an unbounded Martingale/averaging-down approach utilizing high leverage with zero stop-loss or position limits. It lacks critical execution parameters and prioritizes aggressive loss recovery over capital preservation, creating extreme liquidation and margin-call risk. Pre-execution analysis strongly advises against deployment without strict risk controls.",
+        "key_points": [
+          "Unbounded averaging down without a stop loss exposes capital to unlimited downside and high liquidation probability.",
+          "High leverage combined with no maximum drawdown or position limits violates fundamental risk management principles.",
+          "Missing essential parameters (asset, timeframe, leverage multiplier, drop thresholds) prevent quantitative backtesting or validation.",
+          "Strategy assumes mean reversion without accounting for prolonged trending markets or exchange margin requirements.",
+          "Pre-execution recommendation: Reject or restructure with defined stop-loss, position sizing limits, leverage caps, and clear exit rules."
+        ],
+        "raw_ref": "qwen-skill-persona:macro-analyst"
+      }
+    ],
+    "aggregate_signal": "risk-off",
+    "risk_flags": [
+      "technical-analysis: Martingale-style position scaling without explicit stop loss or maximum size limits",
+      "technical-analysis: High leverage combined with unlimited averaging down drastically increases liquidation probability in trending markets",
+      "technical-analysis: Exit logic depends solely on price rebounding to breakeven or slight profit, ignoring trend continuation risk",
+      "technical-analysis: Critical execution parameters missing: asset symbol, timeframe, leverage multiplier, drop thresholds, and exchange margin rules",
+      "technical-analysis: Violates standard risk management frameworks; requires rigorous backtesting, strict capital allocation, and hard drawdown limits before any live deployment",
+      "sentiment-analyst: Martingale-style averaging down with no stop-loss or maximum position limit",
+      "sentiment-analyst: High leverage significantly amplifies liquidation risk during extended drawdowns",
+      "sentiment-analyst: Exit relies entirely on unconfirmed mean-reversion without defined price targets or timeframes",
+      "sentiment-analyst: Critical execution parameters (asset, timeframe, leverage, thresholds) are entirely unspecified",
+      "sentiment-analyst: Explicitly deprioritizes capital preservation, violating foundational risk management principles",
+      "news-briefing: Martingale-style averaging down with high leverage creates exponential risk exposure.",
+      "news-briefing: No stop-loss or maximum position limit guarantees potential total account liquidation.",
+      "news-briefing: Strategy assumes mean reversion without accounting for strong trending or volatile markets.",
+      "news-briefing: Missing critical parameters (asset, timeframe, leverage %, drop thresholds) prevent proper backtesting or risk modeling.",
+      "news-briefing: Prioritizes aggressive loss recovery over capital preservation, violating core risk management principles.",
+      "market-intel: Unbounded averaging-down (Martingale) structure with no stop-loss or maximum position limit",
+      "market-intel: High leverage combined with aggressive loss recovery prioritizes capital at extreme risk",
+      "market-intel: Missing critical execution parameters: asset, timeframe, entry thresholds, leverage multiplier, and margin limits",
+      "market-intel: Assumes mean-reversion without accounting for trending or black-swan downside scenarios",
+      "market-intel: Structurally prone to margin calls and liquidation; requires strict risk controls before any live deployment",
+      "macro-analyst: Unbounded averaging down without a stop loss exposes capital to unlimited downside and high liquidation probability.",
+      "macro-analyst: High leverage combined with no maximum drawdown or position limits violates fundamental risk management principles.",
+      "macro-analyst: Missing essential parameters (asset, timeframe, leverage multiplier, drop thresholds) prevent quantitative backtesting or validation.",
+      "macro-analyst: Strategy assumes mean reversion without accounting for prolonged trending markets or exchange margin requirements.",
+      "macro-analyst: Pre-execution recommendation: Reject or restructure with defined stop-loss, position sizing limits, leverage caps, and clear exit rules."
+    ],
+    "created_at": "2026-06-20T11:10:59.915Z"
   },
   "backtest": {
-    "backtest_id": "backtest_sample_blocked",
-    "run_id": "sample_blocked",
+    "backtest_id": "local_backtest_002_c08b70",
+    "run_id": "run_002_061635",
     "provider": "replay_fixture",
-    "period": "2026-05-01 to 2026-06-15",
-    "pnl": -8.4,
-    "sharpe": 0.18,
-    "win_rate": 38,
-    "max_drawdown": 34.5,
-    "trade_count": 42,
-    "raw_summary_ref": "sample-blocked-playbook-compatible-result",
-    "created_at": "2026-06-18T06:10:05.000Z"
+    "period": "2026-05-09 to 2026-06-20",
+    "pnl": -1.99,
+    "sharpe": -0.71,
+    "win_rate": 27.3,
+    "max_drawdown": 8.2,
+    "trade_count": 11,
+    "raw_summary_ref": "local:BTCUSDT:1h:ema_cross:bars=1000",
+    "status": "live",
+    "created_at": "2026-06-20T11:11:00.316Z",
+    "notes": [
+      "Fixture captured from a REAL local_deterministic backtest over Bitget public klines (BTCUSDT, 1h, 2026-05-09 to 2026-06-20). Relabelled replay_fixture for offline replay; metrics are not fabricated."
+    ]
   },
   "risk": {
-    "risk_id": "risk_sample_blocked",
-    "run_id": "sample_blocked",
+    "risk_id": "risk_002_c20765",
+    "run_id": "run_002_061635",
     "score": 100,
     "level": "High",
     "recommendation": "Block",
@@ -74,218 +316,86 @@
         "evidence": "Strategy asks for leverage or fast loss recovery."
       },
       {
-        "rule_id": "missing-stop-loss",
-        "label": "Missing stop loss",
+        "rule_id": "low-sharpe",
+        "label": "Weak Sharpe ratio",
         "severity": "medium",
-        "points": 18,
-        "evidence": "No explicit stop-loss constraint was parsed."
+        "points": 15,
+        "evidence": "Sharpe is -0.71."
       },
       {
-        "rule_id": "drawdown-critical",
-        "label": "Critical backtest drawdown",
-        "severity": "critical",
-        "points": 40,
-        "evidence": "Max drawdown is 34.5%."
+        "rule_id": "ambiguous-strategy",
+        "label": "Ambiguous strategy fields",
+        "severity": "medium",
+        "points": 14,
+        "evidence": "Specific trading symbol or asset; Trading timeframe; Exact price drop threshold for adding positions; Leverage multiplier value; Maximum allowable position size or margin limit; Rebound percentage or price target for exit; Exchange or broker margin requirements"
+      },
+      {
+        "rule_id": "skill-evidence-risk-off",
+        "label": "Bitget skill evidence is risk-off",
+        "severity": "medium",
+        "points": 18,
+        "evidence": "technical-analysis: Martingale-style position scaling without explicit stop loss or maximum size limits; technical-analysis: High leverage combined with unlimited averaging down drastically increases liquidation probability in trending markets; technical-analysis: Exit logic depends solely on price rebounding to breakeven or slight profit, ignoring trend continuation risk"
+      },
+      {
+        "rule_id": "multiple-skill-risk-flags",
+        "label": "Multiple Bitget skill risk flags",
+        "severity": "medium",
+        "points": 12,
+        "evidence": "25 evidence risk flags were collected before approval."
       }
     ],
     "reasons": [
       "Martingale or unlimited averaging-down behavior: Strategy implies adding to losing positions until rebound.",
       "High leverage requested: Strategy asks for leverage or fast loss recovery.",
-      "Missing stop loss: No explicit stop-loss constraint was parsed.",
-      "Critical backtest drawdown: Max drawdown is 34.5%."
+      "Weak Sharpe ratio: Sharpe is -0.71.",
+      "Ambiguous strategy fields: Specific trading symbol or asset; Trading timeframe; Exact price drop threshold for adding positions; Leverage multiplier value; Maximum allowable position size or margin limit; Rebound percentage or price target for exit; Exchange or broker margin requirements",
+      "Bitget skill evidence is risk-off: technical-analysis: Martingale-style position scaling without explicit stop loss or maximum size limits; technical-analysis: High leverage combined with unlimited averaging down drastically increases liquidation probability in trending markets; technical-analysis: Exit logic depends solely on price rebounding to breakeven or slight profit, ignoring trend continuation risk",
+      "Multiple Bitget skill risk flags: 25 evidence risk flags were collected before approval."
     ],
-    "created_at": "2026-06-18T06:10:06.000Z"
+    "created_at": "2026-06-20T11:11:00.321Z"
   },
   "approval": {
-    "approval_id": "approval_sample_blocked",
-    "run_id": "sample_blocked",
+    "approval_id": "approval_002_2052e7",
+    "run_id": "run_002_061635",
     "required": true,
     "decision": "blocked",
     "reviewer": "risk_engine",
     "reason": "High risk run was blocked before execution.",
-    "channel": "telegram",
-    "timestamp": "2026-06-18T06:10:07.000Z"
+    "channel": "web",
+    "timestamp": "2026-06-20T11:11:00.324Z"
   },
   "report": {
-    "report_id": "report_sample_blocked",
-    "run_id": "sample_blocked",
-    "executive_summary": "Sample blocked run was stopped by the Risk Ledger before execution because it requested high leverage and unlimited averaging down.",
+    "report_id": "report_002_5b4221",
+    "run_id": "run_002_061635",
+    "executive_summary": "Run run_002_061635 was automatically blocked due to extreme pre-execution risk. The proposed BTCUSDT strategy employs a high-leverage, unbounded martingale/averaging-down approach with no stop-loss or position limits. All analytical modules flagged it as 'risk-off', and the risk engine assigned a maximum score (100/100), triggering an immediate pre-execution block.",
     "key_findings": [
-      "Parsed strategy contained averaging-down behavior.",
-      "Backtest showed -8.4% PnL and 34.5% max drawdown.",
-      "Evidence Pack collected 5 Bitget skills with risk-off aggregate signal.",
-      "Risk Engine blocked execution before any paper-trading step."
+      "Strategy relies on unlimited position scaling during drawdowns with explicit high leverage.",
+      "Critical execution parameters are missing: timeframe, leverage multiplier, drop thresholds, and max position size.",
+      "Deterministic backtest yielded negative results: PnL -1.99%, Sharpe -0.71, Max Drawdown 8.2%.",
+      "All 5 analytical skills (technical, sentiment, news, market-intel, macro) unanimously recommend rejection.",
+      "Exit logic depends entirely on unconfirmed mean-reversion, ignoring trend continuation risk."
     ],
     "risk_notes": [
-      "Martingale-like behavior is not allowed.",
-      "No stop loss was provided.",
-      "High leverage language increased risk severity.",
-      "Evidence Pack: sentiment and market-intel flagged risk-off conditions."
+      "Risk Score: 100/100 (Status: Blocked)",
+      "Primary Risk: Unbounded martingale structure combined with high leverage creates exponential liquidation probability.",
+      "Structural Flaw: Zero stop-loss and no maximum drawdown limit violate foundational capital preservation principles.",
+      "Market Assumption: Fails to account for sustained downtrends, black-swan events, or exchange margin requirements.",
+      "Compliance: Explicitly prioritizes aggressive loss recovery over standard risk management frameworks."
     ],
     "audit_trail": [
-      "Strategy input received from Telegram",
-      "Parser extracted dangerous intent",
-      "Backtest-compatible result showed large drawdown",
-      "Risk Engine blocked execution",
-      "Incident report generated"
+      "[object Object]",
+      "[object Object]",
+      "[object Object]",
+      "[object Object]",
+      "[object Object]",
+      "[object Object]"
     ],
     "next_actions": [
-      "Remove unlimited averaging down",
-      "Add explicit stop loss",
-      "Lower leverage and position size",
-      "Re-run backtest before approval"
+      "Reject current strategy configuration and prevent live deployment.",
+      "Mandate explicit risk parameters: hard stop-loss, leverage cap, max position size, and defined entry/exit thresholds.",
+      "Implement mandatory maximum drawdown limits and capital preservation rules.",
+      "Require strategy restructuring and successful backtesting under conservative parameters before re-submission."
     ],
-    "created_at": "2026-06-18T06:10:09.000Z"
-  },
-  "events": [
-    {
-      "event_id": "evt_blocked_001",
-      "run_id": "sample_blocked",
-      "timestamp": "2026-06-18T06:10:00.000Z",
-      "type": "strategy.input.received",
-      "actor": "telegram",
-      "status": "completed",
-      "input_summary": "High leverage averaging-down strategy",
-      "output_summary": "Strategy input accepted and run created.",
-      "duration_ms": 0
-    },
-    {
-      "event_id": "evt_blocked_002",
-      "run_id": "sample_blocked",
-      "timestamp": "2026-06-18T06:10:02.000Z",
-      "type": "strategy.parsed",
-      "actor": "qwen",
-      "status": "completed",
-      "input_summary": "Natural-language strategy",
-      "output_summary": "BTCUSDT unknown 1h with averaging-down risk",
-      "duration_ms": 760
-    },
-    {
-      "event_id": "evt_blocked_evidence",
-      "run_id": "sample_blocked",
-      "timestamp": "2026-06-18T06:10:04.000Z",
-      "type": "skill_hub.evidence.completed",
-      "actor": "skill_hub",
-      "status": "completed",
-      "input_summary": "strategy_sample_blocked",
-      "output_summary": "5 skills collected, aggregate signal: risk-off",
-      "duration_ms": 620,
-      "raw_ref": "fallback"
-    },
-    {
-      "event_id": "evt_blocked_003",
-      "run_id": "sample_blocked",
-      "timestamp": "2026-06-18T06:10:05.000Z",
-      "type": "playbook.backtest.completed",
-      "actor": "playbook",
-      "status": "completed",
-      "input_summary": "strategy_sample_blocked",
-      "output_summary": "PnL -8.4%, Sharpe 0.18, Max DD 34.5%",
-      "duration_ms": 1900,
-      "raw_ref": "sample-blocked-playbook-compatible-result"
-    },
-    {
-      "event_id": "evt_blocked_004",
-      "run_id": "sample_blocked",
-      "timestamp": "2026-06-18T06:10:06.000Z",
-      "type": "risk.scored",
-      "actor": "risk_engine",
-      "status": "blocked",
-      "input_summary": "backtest_sample_blocked/strategy_sample_blocked",
-      "output_summary": "High risk (100/100), recommendation: Block",
-      "duration_ms": 0
-    },
-    {
-      "event_id": "evt_blocked_005",
-      "run_id": "sample_blocked",
-      "timestamp": "2026-06-18T06:10:07.000Z",
-      "type": "run.blocked",
-      "actor": "approval",
-      "status": "blocked",
-      "input_summary": "Block",
-      "output_summary": "High risk run was blocked before execution.",
-      "duration_ms": 0
-    },
-    {
-      "event_id": "evt_blocked_006",
-      "run_id": "sample_blocked",
-      "timestamp": "2026-06-18T06:10:09.000Z",
-      "type": "run.report.generated",
-      "actor": "reporter",
-      "status": "completed",
-      "input_summary": "Run evidence bundle",
-      "output_summary": "Sample blocked run was stopped by the Risk Ledger before execution.",
-      "duration_ms": 0
-    }
-  ],
-  "evidence": {
-    "evidence_id": "evidence_sample_blocked",
-    "run_id": "sample_blocked",
-    "provider": "fallback",
-    "aggregate_signal": "risk-off",
-    "risk_flags": [
-      "sentiment-analyst: Loss-recovery framing is a behavioral risk signal.",
-      "market-intel: High leverage and no stop loss should not pass governance."
-    ],
-    "created_at": "2026-06-18T06:10:04.000Z",
-    "skills": [
-      {
-        "skill": "technical-analysis",
-        "status": "fallback",
-        "signal": "mixed",
-        "confidence": 0.72,
-        "summary": "BTCUSDT technical setup is not enough to offset unsafe averaging-down execution.",
-        "key_points": [
-          "Execution rule dominates chart signal.",
-          "Averaging-down increases tail risk."
-        ],
-        "raw_ref": "fallback:technical-analysis"
-      },
-      {
-        "skill": "sentiment-analyst",
-        "status": "fallback",
-        "signal": "risk-off",
-        "confidence": 0.58,
-        "summary": "Sentiment layer treats fast loss recovery language as risk-off.",
-        "key_points": [
-          "Loss-recovery framing is a behavioral risk signal."
-        ],
-        "raw_ref": "fallback:sentiment-analyst"
-      },
-      {
-        "skill": "news-briefing",
-        "status": "fallback",
-        "signal": "neutral",
-        "confidence": 0.5,
-        "summary": "Fallback mode has no live news shock.",
-        "key_points": [
-          "Use live news before paper trading.",
-          "Replay mode marks this as neutral evidence."
-        ],
-        "raw_ref": "fallback:news-briefing"
-      },
-      {
-        "skill": "market-intel",
-        "status": "fallback",
-        "signal": "risk-off",
-        "confidence": 0.62,
-        "summary": "Market-intel fallback flags strategy construction risk.",
-        "key_points": [
-          "High leverage and no stop loss should not pass governance."
-        ],
-        "raw_ref": "fallback:market-intel"
-      },
-      {
-        "skill": "macro-analyst",
-        "status": "fallback",
-        "signal": "neutral",
-        "confidence": 0.46,
-        "summary": "Macro fallback is neutral; live mode should check CPI/FOMC/rates calendar before approval.",
-        "key_points": [
-          "Macro is valuable as a pre-execution veto, not as a trading signal alone."
-        ],
-        "raw_ref": "fallback:macro-analyst"
-      }
-    ]
+    "created_at": "2026-06-20T11:13:25.301Z"
   }
 }

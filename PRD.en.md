@@ -1,5 +1,7 @@
 # TradeTrace Flight Recorder — Product Requirements Document
 
+> ⚠️ **Implementation status update (2026-06-20 redesign)**: This doc was written earlier; all **GetAgent / Playbook backtest** references have been replaced in the implementation by a **local deterministic backtest engine** ([agent/tools/local-backtest.ts](agent/tools/local-backtest.ts)) over **Bitget public kline endpoints** (`spot_get_candles` / `futures_get_candles`), **no Bitget key required**. Reason: the Playbook control plane was unreachable. New runs only need `QWEN_API_KEY`. The Web UI is English-only with flat routes (i18n removed). All other design (flight recorder, risk ledger, approval, replay, report) is unchanged. [README.en.md](README.en.md) is authoritative.
+
 > Project: TradeTrace AI trading infrastructure
 > Origin: inspired by the [Bitget AI Hackathon](https://bitget-ai.gitbook.io/hackathon)
 > Track 2 (Infra). Designed to keep growing past the hackathon.

@@ -1,168 +1,121 @@
 {
   "run": {
-    "run_id": "sample_success",
+    "run_id": "run_003_668e9e",
     "source_channel": "web",
     "status": "completed",
-    "user_input": "When BTC on 1h EMA20 crosses above EMA50 and RSI crosses from 45 to 55, go long. Use 1.5% stop loss, 4% take profit, max position 15%, pause after two consecutive losses.",
+    "user_input": "Short BTCUSDT on 1h timeframe using EMA12 crossing below EMA26 as the entry, with a 2% stop loss and 5% take profit. Trend-following short only.",
     "market": "BTCUSDT",
-    "started_at": "2026-06-18T06:00:00.000Z",
-    "ended_at": "2026-06-18T06:00:12.000Z",
+    "started_at": "2026-06-20T11:16:39.711Z",
     "final_decision": "Go",
-    "report_id": "report_sample_success"
-  },
-  "strategy": {
-    "strategy_id": "strategy_sample_success",
-    "run_id": "sample_success",
-    "raw_prompt": "When BTC on 1h EMA20 crosses above EMA50 and RSI crosses from 45 to 55, go long. Use 1.5% stop loss, 4% take profit, max position 15%, pause after two consecutive losses.",
-    "structured_strategy": {
-      "symbol": "BTCUSDT",
-      "timeframe": "1h",
-      "direction": "long",
-      "entry_conditions": [
-        "EMA20 crosses above EMA50",
-        "RSI crosses from 45 to 55"
-      ],
-      "exit_conditions": [
-        "Take-profit target"
-      ],
-      "stop_loss": "1.5%",
-      "take_profit": "4%",
-      "position_limit": "15%",
-      "risk_constraints": [
-        "Pause after two consecutive losses",
-        "Position limit requested"
-      ],
-      "unknowns": []
-    },
-    "confidence_notes": [
-      "Sample run fixture for replay mode."
-    ],
-    "created_at": "2026-06-18T06:00:02.000Z"
-  },
-  "backtest": {
-    "backtest_id": "backtest_sample_success",
-    "run_id": "sample_success",
-    "provider": "replay_fixture",
-    "period": "2026-05-01 to 2026-06-15",
-    "pnl": 14.6,
-    "sharpe": 1.42,
-    "win_rate": 56,
-    "max_drawdown": 8.8,
-    "trade_count": 28,
-    "raw_summary_ref": "sample-success-playbook-compatible-result",
-    "created_at": "2026-06-18T06:00:05.000Z"
-  },
-  "risk": {
-    "risk_id": "risk_sample_success",
-    "run_id": "sample_success",
-    "score": 0,
-    "level": "Low",
-    "recommendation": "Go",
-    "triggered_rules": [],
-    "reasons": [
-      "No major risk rules were triggered."
-    ],
-    "created_at": "2026-06-18T06:00:06.000Z"
-  },
-  "approval": {
-    "approval_id": "approval_sample_success",
-    "run_id": "sample_success",
-    "required": false,
-    "decision": "not_required",
-    "reviewer": "system",
-    "reason": "Low risk run can continue automatically.",
-    "channel": "web",
-    "timestamp": "2026-06-18T06:00:07.000Z"
-  },
-  "report": {
-    "report_id": "report_sample_success",
-    "run_id": "sample_success",
-    "executive_summary": "Sample success run completed with Go. Strategy was parsed, backtested, risk-scored, and replayed without triggering major risk rules.",
-    "key_findings": [
-      "Parsed long BTCUSDT strategy on 1h timeframe.",
-      "Backtest PnL 14.6%, Sharpe 1.42, max drawdown 8.8%.",
-      "Evidence Pack collected 5 Bitget skills with risk-on aggregate signal.",
-      "Approval was not required because risk level was Low."
-    ],
-    "risk_notes": [
-      "No major risk rules were triggered."
-    ],
-    "audit_trail": [
-      "Strategy input received",
-      "Qwen-compatible parse completed",
-      "Playbook-compatible backtest completed",
-      "Risk score generated",
-      "Replay completed"
-    ],
-    "next_actions": [
-      "Replay before paper trading",
-      "Monitor drawdown",
-      "Compare against a second strategy version"
-    ],
-    "created_at": "2026-06-18T06:00:12.000Z"
+    "ended_at": "2026-06-20T11:18:25.156Z",
+    "report_id": "report_004_721535"
   },
   "events": [
     {
-      "event_id": "evt_sample_001",
-      "run_id": "sample_success",
-      "timestamp": "2026-06-18T06:00:00.000Z",
+      "event_id": "evt_023_79c209",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:16:39.712Z",
       "type": "strategy.input.received",
       "actor": "user",
       "status": "completed",
-      "input_summary": "BTC EMA/RSI strategy",
+      "input_summary": "Short BTCUSDT on 1h timeframe using EMA12 crossing below EMA26 as the entry, with a 2% stop loss and 5% take profit. Trend-following short only.",
       "output_summary": "Strategy input accepted and run created.",
       "duration_ms": 0
     },
     {
-      "event_id": "evt_sample_002",
-      "run_id": "sample_success",
-      "timestamp": "2026-06-18T06:00:02.000Z",
+      "event_id": "evt_024_c42637",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:17:24.076Z",
       "type": "strategy.parsed",
       "actor": "qwen",
       "status": "completed",
-      "input_summary": "Natural-language strategy",
-      "output_summary": "BTCUSDT long 1h",
-      "duration_ms": 820
+      "input_summary": "Short BTCUSDT on 1h timeframe using EMA12 crossing below EMA26 as the entry, with a 2% stop loss and 5% take profit. Trend-following short only.",
+      "output_summary": "BTCUSDT short 1h",
+      "duration_ms": 44362
     },
     {
-      "event_id": "evt_sample_evidence",
-      "run_id": "sample_success",
-      "timestamp": "2026-06-18T06:00:04.000Z",
-      "type": "skill_hub.evidence.completed",
+      "event_id": "evt_025_514a9a",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:17:24.080Z",
+      "type": "skill_hub.evidence.started",
       "actor": "skill_hub",
-      "status": "completed",
-      "input_summary": "strategy_sample_success",
-      "output_summary": "5 skills collected, aggregate signal: risk-on",
-      "duration_ms": 640,
-      "raw_ref": "fallback"
-    },
-    {
-      "event_id": "evt_sample_003",
-      "run_id": "sample_success",
-      "timestamp": "2026-06-18T06:00:05.000Z",
-      "type": "playbook.backtest.completed",
-      "actor": "playbook",
-      "status": "completed",
-      "input_summary": "strategy_sample_success",
-      "output_summary": "PnL 14.6%, Sharpe 1.42, Max DD 8.8%",
-      "duration_ms": 2100,
-      "raw_ref": "sample-success-playbook-compatible-result"
-    },
-    {
-      "event_id": "evt_sample_004",
-      "run_id": "sample_success",
-      "timestamp": "2026-06-18T06:00:06.000Z",
-      "type": "risk.scored",
-      "actor": "risk_engine",
-      "status": "completed",
-      "input_summary": "backtest_sample_success/strategy_sample_success",
-      "output_summary": "Low risk (0/100), recommendation: Go",
+      "status": "started",
+      "input_summary": "strategy_003_54a2b4",
+      "output_summary": "Collecting macro, news, sentiment, technical, and market-intel evidence.",
       "duration_ms": 0
     },
     {
-      "event_id": "evt_sample_005",
-      "run_id": "sample_success",
-      "timestamp": "2026-06-18T06:00:09.000Z",
+      "event_id": "evt_026_d54cac",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:18:10.713Z",
+      "type": "skill_hub.evidence.completed",
+      "actor": "skill_hub",
+      "status": "completed",
+      "input_summary": "strategy_003_54a2b4",
+      "output_summary": "5 skills collected, aggregate signal: risk-off",
+      "duration_ms": 46629,
+      "raw_ref": "qwen_skill_persona"
+    },
+    {
+      "event_id": "evt_027_a18610",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:18:10.718Z",
+      "type": "backtest.started",
+      "actor": "backtest",
+      "status": "started",
+      "input_summary": "{\"symbol\":\"BTCUSDT\",\"timeframe\":\"1h\",\"direction\":\"short\",\"entry_conditions\":[\"EMA12 crosses below EMA26\"],\"exit_conditions\":[\"Price reaches 5% take profit level\",\"Price hits 2% ...",
+      "output_summary": "Fetching Bitget public klines and running the deterministic local backtest.",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_028_3d8be5",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:18:11.100Z",
+      "type": "backtest.completed",
+      "actor": "backtest",
+      "status": "completed",
+      "input_summary": "strategy_003_54a2b4",
+      "output_summary": "PnL 8.3%, Sharpe 2.95, Max DD 6.95%, 22 trades",
+      "duration_ms": 380,
+      "raw_ref": "local:BTCUSDT:1h:ema_cross:bars=1000"
+    },
+    {
+      "event_id": "evt_029_edafe2",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:18:11.110Z",
+      "type": "risk.scored",
+      "actor": "risk_engine",
+      "status": "completed",
+      "input_summary": "local_backtest_003_94cb93/strategy_003_54a2b4",
+      "output_summary": "Medium risk (44/100), recommendation: Review",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_030_0c5640",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:18:11.112Z",
+      "type": "approval.requested",
+      "actor": "approval",
+      "status": "pending",
+      "input_summary": "Review",
+      "output_summary": "Medium risk run requires human approval.",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_031_266f2a",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:18:25.148Z",
+      "type": "approval.accepted",
+      "actor": "approval",
+      "status": "completed",
+      "input_summary": "Approved for replay; trend-following short with clear risk controls.",
+      "output_summary": "Reviewer approved execution.",
+      "duration_ms": 0
+    },
+    {
+      "event_id": "evt_032_de84ef",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:18:25.152Z",
       "type": "execution.replay.started",
       "actor": "execution",
       "status": "started",
@@ -171,82 +124,267 @@
       "duration_ms": 0
     },
     {
-      "event_id": "evt_sample_006",
-      "run_id": "sample_success",
-      "timestamp": "2026-06-18T06:00:12.000Z",
+      "event_id": "evt_033_fece6c",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:18:25.154Z",
+      "type": "execution.updated",
+      "actor": "execution",
+      "status": "completed",
+      "input_summary": "Replay execution adapter",
+      "output_summary": "Replay completed. No real-money trade was sent.",
+      "duration_ms": 350
+    },
+    {
+      "event_id": "evt_034_85965e",
+      "run_id": "run_003_668e9e",
+      "timestamp": "2026-06-20T11:19:21.307Z",
       "type": "run.report.generated",
       "actor": "reporter",
       "status": "completed",
       "input_summary": "Run evidence bundle",
-      "output_summary": "Sample success run completed with Go.",
+      "output_summary": "AI trading agent run run_003_668e9e successfully parsed and backtested a BTCUSDT 1h trend-following short strategy (EMA12/26 cross, 2% SL, 5% TP). Historical backtesting showed ...",
       "duration_ms": 0
     }
   ],
+  "strategy": {
+    "strategy_id": "strategy_003_54a2b4",
+    "run_id": "run_003_668e9e",
+    "raw_prompt": "Short BTCUSDT on 1h timeframe using EMA12 crossing below EMA26 as the entry, with a 2% stop loss and 5% take profit. Trend-following short only.",
+    "structured_strategy": {
+      "symbol": "BTCUSDT",
+      "timeframe": "1h",
+      "direction": "short",
+      "entry_conditions": [
+        "EMA12 crosses below EMA26"
+      ],
+      "exit_conditions": [
+        "Price reaches 5% take profit level",
+        "Price hits 2% stop loss level"
+      ],
+      "stop_loss": "2%",
+      "take_profit": "5%",
+      "position_limit": "1",
+      "risk_constraints": [
+        "Trend-following short only",
+        "No long positions permitted",
+        "Strict adherence to 2% stop loss per trade"
+      ],
+      "unknowns": [
+        "Position sizing methodology",
+        "Maximum number of concurrent open positions",
+        "Slippage and trading fee assumptions",
+        "Handling of weekend or low-liquidity gaps"
+      ]
+    },
+    "confidence_notes": [
+      "EMA crossover is a lagging indicator and may produce false signals in ranging or choppy markets",
+      "Fixed percentage SL/TP does not adapt to dynamic volatility or ATR",
+      "Strategy requires historical backtesting to confirm win rate, drawdown, and expectancy on BTCUSDT 1h timeframe"
+    ],
+    "created_at": "2026-06-20T11:17:24.070Z"
+  },
   "evidence": {
-    "evidence_id": "evidence_sample_success",
-    "run_id": "sample_success",
-    "provider": "fallback",
-    "aggregate_signal": "risk-on",
-    "risk_flags": [],
-    "created_at": "2026-06-18T06:00:04.000Z",
+    "evidence_id": "evidence_003_1c6c21",
+    "run_id": "run_003_668e9e",
+    "provider": "qwen_skill_persona",
     "skills": [
       {
         "skill": "technical-analysis",
-        "status": "fallback",
-        "signal": "bullish",
-        "confidence": 0.72,
-        "summary": "BTCUSDT technical evidence is compatible with a rules-based momentum strategy.",
+        "status": "live",
+        "signal": "bearish",
+        "confidence": 0.65,
+        "summary": "The strategy outlines a clear trend-following short setup with a mathematically favorable 2.5:1 risk-to-reward ratio. While entry and exit rules are explicit, pre-execution readiness is compromised by missing position sizing rules, lack of volatility/volume confirmation, and unaddressed slippage/fee impacts. The 1h EMA crossover is prone to whipsaws in ranging markets, requiring additional structural filters before live deployment.",
         "key_points": [
-          "Trend confirmation is explicit.",
-          "Stop loss and position sizing make the setup auditable."
+          "Favorable 2.5:1 risk-to-reward ratio (5% take profit vs 2% stop loss)",
+          "Clear, rule-based bearish entry trigger (EMA12 crossing below EMA26) with strict stop-loss enforcement",
+          "High susceptibility to false signals on the 1h timeframe without volume, momentum, or higher-timeframe trend alignment filters",
+          "Critical operational gaps: undefined position sizing, maximum concurrent positions, and unaccounted trading fees/slippage",
+          "Requires rigorous backtesting across varying volatility regimes to validate win rate and overall expectancy prior to execution"
         ],
-        "raw_ref": "fallback:technical-analysis"
+        "raw_ref": "qwen-skill-persona:technical-analysis"
       },
       {
         "skill": "sentiment-analyst",
-        "status": "fallback",
-        "signal": "neutral",
-        "confidence": 0.58,
-        "summary": "No extreme sentiment conflict detected in fallback mode.",
+        "status": "live",
+        "signal": "bearish",
+        "confidence": 0.65,
+        "summary": "The strategy is explicitly structured for bearish momentum on BTCUSDT using a 1h EMA12/26 death cross trigger. It features a favorable 2.5:1 risk-to-reward ratio with strict downside protection. However, pre-execution readiness is hampered by undefined position sizing, fee/slippage assumptions, and gap risk protocols, which must be resolved to ensure consistent performance.",
         "key_points": [
-          "Sentiment evidence should be verified with live Agent Hub data."
+          "Directional bias is strictly bearish, contingent on a 1h EMA12 crossing below EMA26.",
+          "Risk-to-reward ratio is 2.5:1 (5% TP vs 2% SL), providing a mathematical edge if win rate exceeds ~28.6%.",
+          "Strict risk constraints enforce discipline but lack dynamic position sizing and concurrent trade limits.",
+          "Critical operational unknowns (slippage, fees, weekend gap handling) introduce execution risk that could degrade the theoretical edge.",
+          "No live price data provided; signal reflects structural strategy bias rather than current market conditions."
         ],
-        "raw_ref": "fallback:sentiment-analyst"
+        "raw_ref": "qwen-skill-persona:sentiment-analyst"
       },
       {
         "skill": "news-briefing",
-        "status": "fallback",
+        "status": "live",
         "signal": "neutral",
-        "confidence": 0.5,
-        "summary": "Fallback mode has no live news shock.",
+        "confidence": 0.4,
+        "summary": "The strategy outlines a conditional short-only framework with a mathematically favorable 2.5:1 risk-to-reward ratio, but lacks live market validation and critical execution parameters. Pre-execution readiness is incomplete until position sizing, fee/slippage assumptions, and gap-risk protocols are explicitly defined.",
         "key_points": [
-          "Use live news before paper trading.",
-          "Replay mode marks this as neutral evidence."
+          "Entry trigger relies exclusively on a 1-hour EMA12 crossing below EMA26",
+          "Fixed 2% stop loss and 5% take profit establish a 2.5:1 risk-reward ratio",
+          "Strict short-only mandate removes directional flexibility and hedging options",
+          "Critical execution gaps remain: position sizing methodology, concurrent position limits, slippage/fee impact, and weekend/low-liquidity gap handling",
+          "No live price or EMA state data provided; strategy remains conditional and untriggered"
         ],
-        "raw_ref": "fallback:news-briefing"
+        "raw_ref": "qwen-skill-persona:news-briefing"
       },
       {
         "skill": "market-intel",
-        "status": "fallback",
-        "signal": "mixed",
-        "confidence": 0.62,
-        "summary": "Market-intel fallback finds no hard block beyond normal volatility.",
+        "status": "live",
+        "signal": "bearish",
+        "confidence": 0.65,
+        "summary": "The strategy presents a mathematically favorable 1:2.5 risk-to-reward ratio with a clear, rule-based EMA crossover entry. However, pre-execution readiness is compromised by undefined position sizing, lack of volatility/trend filters, and unaddressed slippage/gap risks on the 1h BTCUSDT timeframe. Strict adherence to the 2% stop loss is critical but may be vulnerable to crypto market wicks and liquidity voids.",
         "key_points": [
-          "Monitor volatility and liquidity before execution."
+          "Favorable 1:2.5 risk-to-reward ratio requires only a ~28.6% win rate to break even, providing a solid mathematical edge if execution is clean.",
+          "EMA12/26 crossover on the 1h timeframe is a lagging indicator highly susceptible to whipsaws during consolidation or low-volatility regimes.",
+          "Missing position sizing methodology prevents accurate portfolio risk calculation, making drawdown control unpredictable.",
+          "Unaccounted trading fees, slippage, and weekend/low-liquidity gaps could easily breach the 2% stop loss or reduce the 5% take profit realization.",
+          "Strict short-only constraint limits market adaptability; integrating a higher-timeframe trend filter or volatility threshold (e.g., ADX > 25, ATR-based stops) would significantly improve signal quality and execution safety."
         ],
-        "raw_ref": "fallback:market-intel"
+        "raw_ref": "qwen-skill-persona:market-intel"
       },
       {
         "skill": "macro-analyst",
-        "status": "fallback",
-        "signal": "neutral",
-        "confidence": 0.46,
-        "summary": "Macro fallback is neutral; live mode should check CPI/FOMC/rates calendar before approval.",
+        "status": "live",
+        "signal": "bearish",
+        "confidence": 0.45,
+        "summary": "The strategy defines a conditional bearish setup triggered by a 1h EMA12/26 death cross, targeting a 2.5:1 reward-to-risk ratio. While the mathematical expectancy is structurally sound, the absence of position sizing, fee/slippage modeling, and gap-risk protocols introduces significant pre-execution uncertainty. The rigid short-only mandate lacks regime filters, making it vulnerable to ranging or reversal environments.",
         "key_points": [
-          "Macro is valuable as a pre-execution veto, not as a trading signal alone."
+          "Entry relies on a lagging 1h EMA crossover, which historically underperforms in choppy or low-volatility regimes",
+          "Fixed 2% stop loss and 5% take profit establish a 2.5:1 R:R ratio, requiring a minimum ~29% win rate to break even before costs",
+          "Critical unknowns in position sizing, slippage, and trading fees prevent accurate expectancy and drawdown modeling",
+          "No weekend or low-liquidity gap mitigation exposes the strategy to crypto-specific tail risk and potential stop-slippage",
+          "Strict short-only constraint removes adaptive positioning, increasing vulnerability during macro trend reversals or liquidity shifts"
         ],
-        "raw_ref": "fallback:macro-analyst"
+        "raw_ref": "qwen-skill-persona:macro-analyst"
       }
+    ],
+    "aggregate_signal": "risk-off",
+    "risk_flags": [
+      "technical-analysis: Favorable 2.5:1 risk-to-reward ratio (5% take profit vs 2% stop loss)",
+      "technical-analysis: Clear, rule-based bearish entry trigger (EMA12 crossing below EMA26) with strict stop-loss enforcement",
+      "technical-analysis: High susceptibility to false signals on the 1h timeframe without volume, momentum, or higher-timeframe trend alignment filters",
+      "technical-analysis: Critical operational gaps: undefined position sizing, maximum concurrent positions, and unaccounted trading fees/slippage",
+      "technical-analysis: Requires rigorous backtesting across varying volatility regimes to validate win rate and overall expectancy prior to execution",
+      "sentiment-analyst: Directional bias is strictly bearish, contingent on a 1h EMA12 crossing below EMA26.",
+      "sentiment-analyst: Risk-to-reward ratio is 2.5:1 (5% TP vs 2% SL), providing a mathematical edge if win rate exceeds ~28.6%.",
+      "sentiment-analyst: Strict risk constraints enforce discipline but lack dynamic position sizing and concurrent trade limits.",
+      "sentiment-analyst: Critical operational unknowns (slippage, fees, weekend gap handling) introduce execution risk that could degrade the theoretical edge.",
+      "sentiment-analyst: No live price data provided; signal reflects structural strategy bias rather than current market conditions.",
+      "market-intel: Favorable 1:2.5 risk-to-reward ratio requires only a ~28.6% win rate to break even, providing a solid mathematical edge if execution is clean.",
+      "market-intel: EMA12/26 crossover on the 1h timeframe is a lagging indicator highly susceptible to whipsaws during consolidation or low-volatility regimes.",
+      "market-intel: Missing position sizing methodology prevents accurate portfolio risk calculation, making drawdown control unpredictable.",
+      "market-intel: Unaccounted trading fees, slippage, and weekend/low-liquidity gaps could easily breach the 2% stop loss or reduce the 5% take profit realization.",
+      "market-intel: Strict short-only constraint limits market adaptability; integrating a higher-timeframe trend filter or volatility threshold (e.g., ADX > 25, ATR-based stops) would significantly improve signal quality and execution safety.",
+      "macro-analyst: Entry relies on a lagging 1h EMA crossover, which historically underperforms in choppy or low-volatility regimes",
+      "macro-analyst: Fixed 2% stop loss and 5% take profit establish a 2.5:1 R:R ratio, requiring a minimum ~29% win rate to break even before costs",
+      "macro-analyst: Critical unknowns in position sizing, slippage, and trading fees prevent accurate expectancy and drawdown modeling",
+      "macro-analyst: No weekend or low-liquidity gap mitigation exposes the strategy to crypto-specific tail risk and potential stop-slippage",
+      "macro-analyst: Strict short-only constraint removes adaptive positioning, increasing vulnerability during macro trend reversals or liquidity shifts"
+    ],
+    "created_at": "2026-06-20T11:18:10.708Z"
+  },
+  "backtest": {
+    "backtest_id": "local_backtest_003_94cb93",
+    "run_id": "run_003_668e9e",
+    "provider": "replay_fixture",
+    "period": "2026-05-09 to 2026-06-20",
+    "pnl": 8.3,
+    "sharpe": 2.95,
+    "win_rate": 31.8,
+    "max_drawdown": 6.95,
+    "trade_count": 22,
+    "raw_summary_ref": "local:BTCUSDT:1h:ema_cross:bars=1000",
+    "status": "live",
+    "created_at": "2026-06-20T11:18:11.097Z",
+    "notes": [
+      "Fixture captured from a REAL local_deterministic backtest over Bitget public klines (BTCUSDT, 1h, 2026-05-09 to 2026-06-20). Relabelled replay_fixture for offline replay; metrics are not fabricated."
     ]
+  },
+  "risk": {
+    "risk_id": "risk_003_4f3174",
+    "run_id": "run_003_668e9e",
+    "score": 44,
+    "level": "Medium",
+    "recommendation": "Review",
+    "triggered_rules": [
+      {
+        "rule_id": "ambiguous-strategy",
+        "label": "Ambiguous strategy fields",
+        "severity": "medium",
+        "points": 14,
+        "evidence": "Position sizing methodology; Maximum number of concurrent open positions; Slippage and trading fee assumptions; Handling of weekend or low-liquidity gaps"
+      },
+      {
+        "rule_id": "skill-evidence-risk-off",
+        "label": "Bitget skill evidence is risk-off",
+        "severity": "medium",
+        "points": 18,
+        "evidence": "technical-analysis: Favorable 2.5:1 risk-to-reward ratio (5% take profit vs 2% stop loss); technical-analysis: Clear, rule-based bearish entry trigger (EMA12 crossing below EMA26) with strict stop-loss enforcement; technical-analysis: High susceptibility to false signals on the 1h timeframe without volume, momentum, or higher-timeframe trend alignment filters"
+      },
+      {
+        "rule_id": "multiple-skill-risk-flags",
+        "label": "Multiple Bitget skill risk flags",
+        "severity": "medium",
+        "points": 12,
+        "evidence": "20 evidence risk flags were collected before approval."
+      }
+    ],
+    "reasons": [
+      "Ambiguous strategy fields: Position sizing methodology; Maximum number of concurrent open positions; Slippage and trading fee assumptions; Handling of weekend or low-liquidity gaps",
+      "Bitget skill evidence is risk-off: technical-analysis: Favorable 2.5:1 risk-to-reward ratio (5% take profit vs 2% stop loss); technical-analysis: Clear, rule-based bearish entry trigger (EMA12 crossing below EMA26) with strict stop-loss enforcement; technical-analysis: High susceptibility to false signals on the 1h timeframe without volume, momentum, or higher-timeframe trend alignment filters",
+      "Multiple Bitget skill risk flags: 20 evidence risk flags were collected before approval."
+    ],
+    "created_at": "2026-06-20T11:18:11.105Z"
+  },
+  "approval": {
+    "approval_id": "approval_005_61751e",
+    "run_id": "run_003_668e9e",
+    "required": true,
+    "decision": "approved",
+    "reviewer": "web-user",
+    "reason": "Approved for replay; trend-following short with clear risk controls.",
+    "channel": "web",
+    "timestamp": "2026-06-20T11:18:25.146Z"
+  },
+  "report": {
+    "report_id": "report_004_721535",
+    "run_id": "run_003_668e9e",
+    "executive_summary": "AI trading agent run run_003_668e9e successfully parsed and backtested a BTCUSDT 1h trend-following short strategy (EMA12/26 cross, 2% SL, 5% TP). Historical backtesting showed strong metrics (8.3% PnL, 2.95 Sharpe, 6.95% Max DD), but the run was assigned a medium risk score (44/100) due to unresolved operational parameters. Following mandatory human review and approval, execution was safely completed in replay mode with zero real-capital exposure. Aggregate multi-skill evidence indicates a risk-off bias, highlighting structural gaps that must be resolved prior to live deployment.",
+    "key_findings": [
+      "Backtest yielded 8.3% PnL, 2.95 Sharpe ratio, and 6.95% max drawdown across 22 simulated trades.",
+      "Strategy features a mathematically favorable 2.5:1 risk-to-reward ratio, requiring only ~28.6% win rate to break even pre-costs.",
+      "EMA12/26 crossover on the 1h timeframe is a lagging indicator highly prone to false signals in ranging or low-volatility regimes.",
+      "Critical operational gaps identified: undefined position sizing, unaccounted trading fees/slippage, and missing weekend/liquidity gap protocols.",
+      "Execution was restricted to a deterministic replay adapter; no live market orders were transmitted."
+    ],
+    "risk_notes": [
+      "Risk Engine Score: 44/100 (Medium) - Triggered mandatory human approval workflow.",
+      "Fixed percentage SL/TP lacks dynamic volatility adjustment (e.g., ATR), increasing vulnerability to crypto wicks and liquidity voids.",
+      "Unmodeled slippage, exchange fees, and weekend gap risks may degrade theoretical expectancy and breach the 2% stop-loss threshold.",
+      "Absence of position sizing rules and concurrent trade limits prevents accurate portfolio-level drawdown control.",
+      "Strict short-only mandate lacks higher-timeframe regime filters, increasing exposure during macro trend reversals or consolidation phases."
+    ],
+    "audit_trail": [
+      "2026-06-20T11:16:39Z - Strategy input received via web channel; run initialized.",
+      "2026-06-20T11:17:24Z - Qwen parsed prompt into structured rule-based short framework.",
+      "2026-06-20T11:18:10Z - Skill Hub evidence collection completed (5/5 skills); aggregate signal: risk-off.",
+      "2026-06-20T11:18:11Z - Local deterministic backtest completed (1000 bars, Bitget klines).",
+      "2026-06-20T11:18:11Z - Risk engine scored run as Medium (44/100); routed to approval queue.",
+      "2026-06-20T11:18:25Z - Human reviewer approved; execution replay completed successfully with no live trades."
+    ],
+    "next_actions": [
+      "Define explicit position sizing methodology and maximum concurrent open position limits.",
+      "Integrate dynamic stop-loss/take-profit logic (e.g., ATR-based) to adapt to BTC volatility regimes.",
+      "Model realistic trading fees, slippage, and weekend/low-liquidity gap scenarios in subsequent backtests.",
+      "Add higher-timeframe trend alignment and volume/momentum confirmation filters to reduce EMA whipsaw exposure.",
+      "Transition to paper trading or forward testing across multiple market conditions before authorizing live capital deployment."
+    ],
+    "created_at": "2026-06-20T11:19:21.301Z"
   }
 }
