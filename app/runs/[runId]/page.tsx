@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation';
 import { ApprovalActions } from '@/components/approval-actions';
+import { BacktestChart } from '@/components/backtest-chart';
+import { BacktestMetrics } from '@/components/backtest-metrics';
 import { EvidencePackPanel } from '@/components/evidence-pack';
 import { ReportPanel } from '@/components/report-panel';
 import { RiskLedger } from '@/components/risk-ledger';
@@ -58,12 +60,10 @@ export default async function RunDetailPage({ params }: Props) {
               {bundle.backtest.status === 'failed' && (
                 <p className="warn">Backtest failed: {bundle.backtest.raw_summary_ref}. Metrics below are zeroed; the run is still auditable.</p>
               )}
-              <div className="grid two" style={{ marginTop: 16 }}>
-                <div className="metric"><span>PnL</span><strong>{bundle.backtest.pnl}%</strong></div>
-                <div className="metric"><span>Sharpe</span><strong>{bundle.backtest.sharpe}</strong></div>
-                <div className="metric"><span>Max drawdown</span><strong>{bundle.backtest.max_drawdown}%</strong></div>
-                <div className="metric"><span>Win rate</span><strong>{bundle.backtest.win_rate}%</strong></div>
-              </div>
+              {bundle.backtest.chart && bundle.backtest.status !== 'failed' && (
+                <BacktestChart chart={bundle.backtest.chart} />
+              )}
+              <BacktestMetrics backtest={bundle.backtest} />
               {bundle.backtest.notes && bundle.backtest.notes.length > 0 && (
                 <details style={{ marginTop: 16 }}>
                   <summary>Backtest provenance & interpretation</summary>

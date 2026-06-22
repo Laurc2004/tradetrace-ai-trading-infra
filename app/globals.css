@@ -247,6 +247,41 @@ p { color: var(--muted); margin: 14px 0 0; }
 .terminal-body .t-muted { color: var(--subtle); }
 .terminal-body .t-line { display: block; }
 
+/* ---------- Backtest chart + metric cards ---------- */
+.backtest-chart { width: 100%; }
+.backtest-chart .chart-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--subtle);
+  margin-bottom: 6px;
+}
+.bt-svg { width: 100%; height: auto; display: block; border-radius: var(--radius-md); background: var(--bg-elev); }
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.metric-card {
+  position: relative;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border-left: 2px solid var(--line);
+  overflow: hidden;
+}
+.metric-card-label {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.metric-card-value { font-size: 26px; font-weight: 650; margin-top: 4px; line-height: 1.1; }
+.metric-card-spark { margin-top: 10px; }
+.spark-svg { width: 100%; height: 26px; display: block; }
+.spark-empty { height: 26px; }
+
 /* ---------- Step list (used in hero feature card) ---------- */
 .step-list { display: grid; gap: 14px; margin-top: 28px; }
 .step {
@@ -491,10 +526,12 @@ details > ul { margin-top: 12px; }
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; gap: 40px; }
   .grid.two, .grid.three, .grid.four, .stat-grid { grid-template-columns: 1fr 1fr; }
+  .metric-grid { grid-template-columns: 1fr 1fr; }
   main { padding: 48px 0 80px; }
 }
 @media (max-width: 560px) {
   .grid.two, .grid.three, .grid.four, .stat-grid { grid-template-columns: 1fr; }
+  .metric-grid { grid-template-columns: 1fr; }
   .topbar { padding: 14px 18px; }
   main { width: calc(100% - 32px); }
   h1 { font-size: 40px; }

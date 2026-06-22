@@ -2,7 +2,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { clamp, makeId, nowIso } from '@/lib/id';
 import { errorMeta, logError, logInfo, logWarn } from '@/lib/logger';
-import type { BacktestResult, StrategySpec } from '@/lib/types';
+import type { BacktestCandle, BacktestChart, BacktestResult, BacktestTrade, StrategySpec } from '@/lib/types';
 
 /**
  * Local deterministic backtest engine.
@@ -94,6 +94,13 @@ export async function runLocalBacktest(runId: string, strategy: StrategySpec): P
   const last = candles[candles.length - 1];
   const period = `${new Date(first.ts).toISOString().slice(0, 10)} to ${new Date(last.ts).toISOString().slice(0, 10)}`;
 
+  // Build the chart payload: keep the most recent ~120 candles for the SVG
+  // (dense enough to read, sparse enough to render). The equity curve is
+  // indexed by candle position (curve[j] == mark-to-market at candles[j+1]),
+  // so we slice both to the same trailing window for alignment.
+  const CHART_BARS = 120;
+  const chart = buildChart(candles, equity.equityCurve, equity.trades, CHART_BARS);
+
   const result: BacktestResult = {
     backtest_id: makeId('local_backtest'),
     run_id: runId,
@@ -106,6 +113,7 @@ export async function runLocalBacktest(runId: string, strategy: StrategySpec): P
     trade_count: metrics.tradeCount,
     raw_summary_ref: `local:${symbol}:${granularity}:${plan.kind}:bars=${candles.length}`,
     status: 'live',
+    chart,
     notes: [
       `Local deterministic backtest over ${candles.length} real Bitget public klines (${symbol}, ${granularity}).`,
       `Interpreted as ${plan.kind} (fast EMA ${plan.fast}, slow EMA ${plan.slow}, direction ${plan.direction}).`,
@@ -215,6 +223,7 @@ interface SimResult {
   equityCurve: number[];
   tradeReturns: number[]; // per-trade fractional returns (e.g. 0.012 = +1.2%)
   tradeCount: number;
+  trades: BacktestTrade[]; // per-trade markers for charting
 }
 
 /**
@@ -230,6 +239,7 @@ export function simulate(candles: Candle[], plan: ExecutionPlan): SimResult {
 
   let position: Position | null = null;
   const tradeReturns: number[] = [];
+  const trades: BacktestTrade[] = [];
   let equity = 1.0;
   const equityCurve: number[] = [];
 
@@ -240,7 +250,7 @@ export function simulate(candles: Candle[], plan: ExecutionPlan): SimResult {
     // Manage open position first (stop / target / signal-flip exits), then entries.
     if (position) {
       let exitPrice: number | null = null;
-      let reason = '';
+      let reason: BacktestTrade['reason'] = 'signal-flip';
 
       if (position.side === 'long') {
         if (plan.stopLossPct && bar.low <= position.entry * (1 - plan.stopLossPct)) {
@@ -272,8 +282,16 @@ export function simulate(candles: Candle[], plan: ExecutionPlan): SimResult {
           : 1 - exitPrice / position.entry;
         equity *= 1 + ret;
         tradeReturns.push(ret);
+        trades.push({
+          side: position.side,
+          entry_ts: position.entryTs,
+          entry_price: position.entry,
+          exit_ts: bar.ts,
+          exit_price: exitPrice,
+          return_pct: round(ret * 100, 2),
+          reason,
+        });
         position = null;
-        void reason;
       }
     }
 
@@ -297,7 +315,7 @@ export function simulate(candles: Candle[], plan: ExecutionPlan): SimResult {
     equityCurve.push(markEquity);
   }
 
-  return { equityCurve, tradeReturns, tradeCount: tradeReturns.length };
+  return { equityCurve, tradeReturns, tradeCount: tradeReturns.length, trades };
 }
 
 function entrySignal(
@@ -516,6 +534,58 @@ function isFresh(candles: Candle[]): boolean {
   if (!candles.length) return false;
   const age = Date.now() - candles[candles.length - 1].ts;
   return age < 24 * 60 * 60 * 1000; // cache valid for 1 day
+}
+
+// ---------------------------------------------------------------------------
+// Chart payload.
+// ---------------------------------------------------------------------------
+
+/**
+ * Assemble the chart payload from the full candle series, equity curve, and
+ * per-trade markers. Keeps only the trailing `maxBars` candles so the SVG
+ * stays readable (the full ~2000-bar window is too dense to render).
+ *
+ * Alignment: `equityCurve[j]` is the mark-to-market at `candles[j+1]`. We keep
+ * the last `maxBars` candles and the last `maxBars` equity points so both
+ * arrays line up index-for-index with the visible window. Trades whose exit
+ * falls inside the window are kept (their entry may predate it — that's fine,
+ * the entry marker just won't render on-screen).
+ */
+/**
+ * Assemble the chart payload covering the WHOLE backtest period. The full
+ * series (~2000 bars) is too dense to render as individual candles, so we
+ * aggregate it into at most `maxBars` buckets by OHLC-merging equal-sized
+ * groups. The equity curve is sampled once per bucket (close of last bar in
+ * the bucket). Trades are ALL kept — they index into the full timeline and
+ * the client maps them onto the bucket x-axis, so every entry/exit stays
+ * visible regardless of where in the period it occurred.
+ */
+function buildChart(candles: Candle[], equityCurve: number[], trades: BacktestTrade[], maxBars: number): BacktestChart {
+  const n = candles.length;
+  if (n === 0) return { candles: [], equity_curve: [], trades };
+  const bucketSize = Math.max(1, Math.ceil(n / maxBars));
+
+  const aggCandles: BacktestCandle[] = [];
+  const aggEquity: number[] = [];
+  for (let i = 0; i < n; i += bucketSize) {
+    const slice = candles.slice(i, i + bucketSize);
+    if (slice.length === 0) continue;
+    const high = Math.max(...slice.map((c) => c.high));
+    const low = Math.min(...slice.map((c) => c.low));
+    aggCandles.push({
+      ts: slice[slice.length - 1].ts,
+      open: slice[0].open,
+      high,
+      low,
+      close: slice[slice.length - 1].close,
+    });
+    // equityCurve[j] corresponds to candles[j+1]; sample the equity at the last
+    // bar of the bucket (index n-1 maps to equityCurve.length-1).
+    const eqIdx = Math.min(i + slice.length, equityCurve.length - 1);
+    aggEquity.push(equityCurve[Math.max(0, eqIdx)]);
+  }
+
+  return { candles: aggCandles, equity_curve: aggEquity, trades };
 }
 
 // ---------------------------------------------------------------------------

@@ -83,6 +83,30 @@ export interface EvidencePack {
   created_at: string;
 }
 
+export interface BacktestTrade {
+  side: 'long' | 'short';
+  entry_ts: number;
+  entry_price: number;
+  exit_ts: number;
+  exit_price: number;
+  return_pct: number; // per-trade fractional return (e.g. 0.012 = +1.2%)
+  reason: 'signal-flip' | 'stop-loss' | 'take-profit';
+}
+
+export interface BacktestCandle {
+  ts: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
+export interface BacktestChart {
+  candles: BacktestCandle[]; // chronological, same length as equity_curve
+  equity_curve: number[]; // per-bar equity indexed to 1.0 start
+  trades: BacktestTrade[];
+}
+
 export interface BacktestResult {
   backtest_id: string;
   run_id: string;
@@ -96,6 +120,7 @@ export interface BacktestResult {
   raw_summary_ref: string;
   status?: 'live' | 'failed';
   notes?: string[];
+  chart?: BacktestChart; // candle series + equity curve + per-trade markers (omitted on legacy fixtures)
   created_at: string;
 }
 
