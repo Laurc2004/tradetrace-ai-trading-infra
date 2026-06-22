@@ -11,6 +11,8 @@ NL strategy → Qwen parse → Bitget Skill Evidence Pack → Local deterministi
             → Risk Ledger → Approval Gate → Paper / Replay execution → Post-run Report
 ```
 
+![TradeTrace landing](samples/screenshot-landing.webp)
+
 AI trading agents are powerful but unsafe as black boxes — you can't see *why* a decision was made, and tool calls, backtests, risk checks, approvals, and execution are scattered everywhere, with no way to replay a failed run. TradeTrace is the missing governance layer between autonomous agents and trading execution: **a black box + cockpit voice recorder for trading-agent runs.**
 
 Core stance: **risk scoring is rule-based, deterministic, and explainable; LLMs are used for parsing and reporting only — never for the final safety decision. Backtest metrics are computed on Bitget's official public market data — real and reproducible, never fabricated.**
@@ -106,6 +108,14 @@ Two entry points share **one run store** — a run started in Telegram is visibl
   - `/runs/<runId>` — run detail: Flight Recorder timeline, Risk Ledger, backtest evidence, approval buttons, post-run report
   - `/dashboard` — dashboard
 - When a run reaches `awaiting_approval`, the detail page shows **Approve / Reject** buttons (human-in-the-loop).
+
+**New run page** (paste an NL strategy; the right-hand Live pipeline tracks the six stages in real time):
+
+![New run page](samples/screenshot-newrun.webp)
+
+**Run detail page** (Flight Recorder timeline, Risk Ledger, backtest evidence, approval buttons, post-run report):
+
+![Run detail page](samples/screenshot-rundetail.webp)
 
 ### B. Telegram Bot (complementary)
 
