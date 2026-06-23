@@ -10,6 +10,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run build",
+    "reproduce": "npx --yes tsx scripts/reproduce-backtest.mts",
     "telegram:register": "node scripts/telegram-register-commands.mjs"
   },
   "dependencies": {

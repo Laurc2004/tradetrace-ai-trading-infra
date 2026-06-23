@@ -23,6 +23,49 @@ The project originated from the [Bitget AI Hackathon](https://bitget-ai.gitbook.
 
 ---
 
+## 🏆 Submission (Hackathon)
+
+> Track: **🟩 Trading Infra**
+
+### Part 1 · Idea
+
+**Pain point**: AI trading agents are powerful but unsafe as black boxes. An autonomous agent that can "sense the market → form a strategy → place orders → manage risk" is impossible to debug once it goes wrong — you can't see *why* it acted. Tool calls, backtests, risk checks, approvals, and execution are scattered across logs / dashboards / chats, with no standard audit trail scoped to a single run, and no clean way to replay a failed or dangerous run for review.
+
+**Solution**: TradeTrace (a black box + cockpit voice recorder for trading agents) fills the missing governance layer between autonomous agents and trading execution, turning every run into a replayable, auditable trail:
+
+```text
+NL strategy → Qwen parse → Bitget Skill Evidence Pack → Local deterministic backtest (real Bitget public klines)
+            → Rule-based Risk Ledger → Human-in-the-loop Approval Gate → Paper / Replay execution → Post-run Report
+```
+
+Three key design decisions:
+
+1. **Risk scoring is rule-based, deterministic, and explainable** — the LLM only parses the strategy and writes the report; it never makes the final safety decision;
+2. **The backtest runs on Bitget's official public market data — real and reproducible** — it hits `https://api.bitget.com/api/v2/spot/market/candles` (the same endpoint behind Agent Hub's `spot_get_candles` / `futures_get_candles`), never fabricated;
+3. **The default execution layer is a replay adapter that explicitly sends no real orders**, and there is always an auditable gate before execution.
+
+### Part 2 · Completion
+
+**Done**: the full governance backbone — record → backtest → risk-gate → approve → execute → report → replay; two entry points (Web UI + Telegram bot, sharing one Run store); a deterministic rule-based risk engine (blocks martingale / high-leverage / missing-stop-loss strategies, with decisions degrading to Go / Review / Block); a local deterministic backtest engine (EMA cross / RSI / momentum, bar-close simulation, real PnL / Sharpe / drawdown / win-rate); a flight-recorder-style timeline, human-in-the-loop approval, post-run reports, and structured on-disk logs. Every core capability sits behind a clean tool boundary ([agent/tools/](agent/tools/)) with an explicit swap point, so the whole thing works as a scaffold for further development.
+
+**Problems hit & how they were solved**:
+
+- The official Playbook was unreachable → switched to a **local deterministic backtest**, which turned out *more* reproducible (judges can verify with one `npm run reproduce`);
+- The five Skill Hub skills expose no fixed REST endpoint → **simulated the five personas with Qwen** so local and deployed behavior match, with a clean swap point left open;
+- Tempted to silently degrade when a backtest fails → insisted on an **explicit `failed` status** surfaced in the UI with the real cause, never masked.
+
+**Not yet done / next**: a real order adapter (default is replay, explicitly no real orders); WebSocket private market data and depth; Playbook / Agent Hub orchestration; an MCP server wrapper.
+
+**Stack & Bitget tools**: Next.js (App Router, TypeScript), Qwen (strategy parsing + report, via the Bitget proxy `qwen3.6-plus`), Zod. **The `agent/` directory follows the [Vercel Eve](https://vercel.com/eve) "an agent is a directory" file convention** (`agent.ts` + `instructions.md` + `tools/ / skills/ / subagents/ / channels/ / schedules/`), making it straightforward to drop in the Eve runtime later; today the run lifecycle is orchestrated by Next.js + a hand-written `agent.ts`. **Bitget tools**: direct calls to Bitget **public market API** (same source as Agent Hub's `spot_get_candles` / `futures_get_candles`, no key needed for backtest); the evidence pack's skill priority is modeled on the **Skill Hub**'s five analyst personas.
+
+**One-command reproduction for judges**: `npm run reproduce` loads the already-parsed strategy from a sample fixture, feeds it to the same engine the app uses at runtime, replays it over real Bitget public klines, and prints the result next to the recorded values (trade count / win rate / max drawdown match exactly). See [Logs & reproducibility](#logs--reproducibility).
+
+### Part 3 · Thoughts on AI Trading (optional)
+
+The real bottleneck for Agentic Trading isn't "can it place orders autonomously" — model capability is already there — it's **trust and accountability**. An agent that runs while you sleep, but can't answer "why did it do that", will never touch real money. Building TradeTrace convinced me the core of this generation of AI trading infra isn't a smarter strategy but making the *why* explicit: explainable risk, replayable trails, human-in-the-loop gates. That's the layer LLMs must cross to go from "demo" to "production agent".
+
+---
+
 ## What problem it solves
 
 The official Track 2 (Trading Infra) judging criterion, verbatim: **"Can other developers actually integrate it with low friction; does it genuinely solve a pain point rather than reproducing existing tools."** TradeTrace targets the missing layer for AI trading agents — **observability, auditability, approval, replay, and post-run analysis**:
@@ -248,6 +291,37 @@ Returns a `sendMessage`-shaped JSON with the created `run_id` and link.
 
 ## Logs & reproducibility
 
+### One-command reproduction for judges (no API needed)
+
+Backtest results are not accepted as plain screenshots — the code that produced
+them ships with the repo and can be reproduced. There is one built-in command:
+
+```bash
+npm run reproduce
+```
+
+It loads the **already-parsed strategy** from the sample fixture
+[`samples/run-success.json`](samples/run-success.json), feeds it to the *same*
+engine the app uses at runtime (`runLocalBacktest` in
+[agent/tools/local-backtest.ts](agent/tools/local-backtest.ts)), replays it over
+**real Bitget public klines** (BTCUSDT, 1h), and prints the freshly-computed
+metrics next to the values recorded in the fixture:
+
+```text
+metric                   reproduced       recorded
+pnl (%)                         7.5            8.3
+sharpe                         2.65           2.95
+max drawdown (%)               6.95           6.95
+win rate (%)                   31.8           31.8
+trade count                      22             22
+```
+
+The deterministic parts (trade count, win rate, max drawdown) match exactly;
+PnL/Sharpe drift as real market data advances (the fixture was captured on
+2026-06-20, the re-run pulls the latest klines) — **that is real-data variance,
+not fabrication**. Script: [scripts/reproduce-backtest.mts](scripts/reproduce-backtest.mts);
+no Qwen key, no Bitget key required.
+
 ### Run logs (timestamped, with call counts)
 
 **Every run writes a structured log locally**, grouped by run + timestamp:
@@ -330,7 +404,7 @@ POST /api/telegram              # Telegram webhook entry
 .
 ├── README.md / README.en.md
 ├── .env.example                # env template (only QWEN_* required; backtest needs no Bitget key)
-├── agent/
+├── agent/                     # follows the Vercel Eve "an agent is a directory" convention
 │   ├── agent.ts                # main run lifecycle (startRun / approve / reject / execute)
 │   ├── instructions.md         # agent identity & safety bounds
 │   ├── tools/
